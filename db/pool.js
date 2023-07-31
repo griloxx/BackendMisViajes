@@ -15,13 +15,9 @@ const getPool = async ()=>{
             password: DB_PASSWORD,
             database: DB_DATABASE,
             timezone: "local"
-
-
-
-        }
-
-        );
+        })
     }
     return await pool.getConnection()
 }
 
+module.exports = getPool

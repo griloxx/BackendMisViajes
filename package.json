@@ -4,7 +4,8 @@
   "description": "Proyecto API De Viajes Recomendados Con Node y Express",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "database": "node ./db/init_db.js"
   },
   "keywords": [],
   "author": "",
