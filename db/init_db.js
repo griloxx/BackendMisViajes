@@ -17,6 +17,7 @@ async function initDb () {
             name VARCHAR(50) NOT NULL,
             email VARCHAR(80) UNIQUE NOT NULL,
             password VARCHAR(100) NOT NULL,
+            codigoRegistro VARCHAR(50),
             create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
             avatar VARCHAR(50),
             PRIMARY KEY (id)
