@@ -19,10 +19,10 @@ app.use((req, res, next) => {
 
 
 app.use((err, req, res, next) => {
-  console.log(err);
+  console.log("el error esta aki");
   // Si el error tiene el nombre "ValidationError", quiere decir que es un error tirado por Joi, así que le ponemos un statusCode 400
-  if (error.name === "ValidationError") {
-    error.statusCode = 400;
+  if (err.name === "ValidationError") {
+    err.statusCode = 400;
   }
 
 

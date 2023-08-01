@@ -11,8 +11,6 @@ async function getAll() {
     );
 
     return entradas;
-  } catch (error) {
-    console.log(error);
   } finally{
     if (connection){
       connection.release();
@@ -25,13 +23,25 @@ async function getConsulta(lugar, categoria) {
 
   try {
     connection = await getPool();
-    const [consulta] = await connection.query(
-      "SELECT * FROM entradas WHERE lugar = ? OR categoria = ?",
-      [lugar, categoria]
+    
+    const [consulta1] = await connection.query(
+      "SELECT * FROM entradas WHERE lugar like ? AND categoria = ? ORDER BY entradilla DESC LIMIT 3",
+      [`%${lugar}%`, categoria]
     )
-    return consulta
-  } catch (error){
-    console.log (error)
+    
+    const [consulta2] = await connection.query(
+      "SELECT * FROM entradas WHERE lugar like ? OR categoria = ? ORDER BY entradilla DESC LIMIT 3",
+      [`%${lugar}%`, categoria]
+    )
+    
+      if(consulta1.length > 0) {
+        return consulta1
+      } else if (consulta2.length > 0){
+        return consulta2
+      } else{
+        return consulta3 = "No se han encontrado coincidencias"
+      }
+
   } finally {
     if (connection) {
       connection.release();
