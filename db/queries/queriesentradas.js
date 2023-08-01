@@ -1,13 +1,14 @@
 const getPool = require("../pool");
 
-async function getAll() {
+async function getAll(votos = "entradilla") {
   let connection;
 
   try {
     connection = await getPool();
 
     const [entradas] = await connection.query(
-      "SELECT * FROM entradas ORDER BY entradilla DESC LIMIT 3"
+      "SELECT * FROM entradas ORDER BY ?? DESC LIMIT 3",
+      [votos]
     );
 
     return entradas;
@@ -18,20 +19,20 @@ async function getAll() {
   }
 }
 
-async function getConsulta(lugar, categoria) {
+async function getConsulta(lugar, categoria, votos = "entradilla") {
   let connection;
 
   try {
     connection = await getPool();
     
     const [consulta1] = await connection.query(
-      "SELECT * FROM entradas WHERE lugar like ? AND categoria = ? ORDER BY entradilla DESC LIMIT 3",
-      [`%${lugar}%`, categoria]
+      "SELECT * FROM entradas WHERE lugar like ? AND categoria = ? ORDER BY ?? DESC LIMIT 3",
+      [`%${lugar}%`, categoria, votos]
     )
     
     const [consulta2] = await connection.query(
-      "SELECT * FROM entradas WHERE lugar like ? OR categoria = ? ORDER BY entradilla DESC LIMIT 3",
-      [`%${lugar}%`, categoria]
+      "SELECT * FROM entradas WHERE lugar like ? OR categoria = ? ORDER BY ?? DESC LIMIT 3",
+      [`%${lugar}%`, categoria, votos]
     )
     
       if(consulta1.length > 0) {

@@ -6,4 +6,6 @@ router.get("/", controlador.listar);
 
 router.get("/consulta", controlador.consulta);
 
+router.get("/consultavotos", controlador.consulta);
+
 module.exports = router;
