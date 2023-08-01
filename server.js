@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
 
-app.get("/", (req, res) => {
-  res.send("prueba completada");
-});
+require("dotenv").config();
+const { port } = process.env;
+const getEntradas = require("./rutas/rutasentradas");
+
+app.use("/entradas", getEntradas);
 
 app.use((req, res, next) => {
   res.status(404);
@@ -23,6 +25,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(3000, () => {
-  `Servidor iniciado en el puerto 3000`;
+app.listen(port, () => {
+  `Servidor iniciado en el puerto ${port}`;
 });
