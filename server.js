@@ -7,7 +7,7 @@ const { port } = process.env;
 
 const getEntradas = require("./rutas/rutasentradas");
 
-
+app.use(express.json())
 
 app.use("/entradas", getEntradas);
 

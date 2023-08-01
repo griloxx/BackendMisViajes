@@ -4,4 +4,6 @@ const controlador = require("../controller/entradascontroller");
 
 router.get("/", controlador.listar);
 
+router.get("/consulta", controlador.consulta);
+
 module.exports = router;
