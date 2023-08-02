@@ -5,13 +5,14 @@ require("dotenv").config();
 const { port } = process.env;
 
 const getEntradas = require("./rutas/rutasentradas");
-
 const getUsuarios = require("./rutas/rutasusuarios");
 
+//Middleware para req.body
 app.use(express.json());
 
+//Rutas de entradas
 app.use("/entradas", getEntradas);
-
+//Rutas de usuarios
 app.use("/usuarios", getUsuarios);
 
 // Pagina no encontrada
@@ -26,7 +27,6 @@ app.use((err, req, res, next) => {
   if (err.name === "ValidationError") {
     err.statusCode = 400;
   }
-
   res.status(err.statusCode || 500);
   res.send({
     status: "error",

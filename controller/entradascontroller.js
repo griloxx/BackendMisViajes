@@ -1,7 +1,7 @@
 const { getAll, getConsulta } = require("../db/queries/queriesentradas");
 // const generarError = require("../helpers/generarError");
 
-// Función asincrona para realizar una busqueda de todas las entradas
+// Función asincrona para listar de todas las entradas
 async function listar(req, res, next) {
   let entradas;
   try {
@@ -17,7 +17,7 @@ async function listar(req, res, next) {
   }
 }
 
-// Función asincrona para realizar consultas de lugar y categoria
+// Función asincrona para realizar consultas de lugar y/o categoria
 async function consulta(req, res, next) {
   let consulta;
   try {

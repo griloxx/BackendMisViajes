@@ -1,6 +1,6 @@
 const getPool = require("../pool");
 
-//Ordenar por fecha de entrada
+// Coger todos las entradas ordenado por votos o fecha(Entradilla)
 async function getAll(votos = "entradilla") {
   let connection;
 
@@ -20,7 +20,7 @@ async function getAll(votos = "entradilla") {
   }
 }
 
-// Ordenar por votos
+// Filtrar por lugar o categoría ordenado por votos o fecha(Entradilla)
 async function getConsulta(lugar, categoria, votos = "entradilla") {
   let connection;
 

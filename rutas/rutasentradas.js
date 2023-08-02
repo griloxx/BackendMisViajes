@@ -2,9 +2,10 @@ const express = require("express");
 const router = express.Router();
 const controlador = require("../controller/entradascontroller");
 
-//Rutas de entradas y consulta de entradas
+// Ruta para listar los Registros general
 router.get("/", controlador.listar);
 
+// Ruta de búsqueda por lugar y/o categoría
 router.get("/consulta", controlador.consulta);
 
 

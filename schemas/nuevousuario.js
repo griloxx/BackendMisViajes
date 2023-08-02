@@ -1,5 +1,7 @@
 const joi = require ("joi");
 
+
+// Esquema joi validar registro de usuario
 const esquemaRegistro = joi.object({
     name: joi.string().min(2).max(50).required(),
     email: joi.string().email().min(5).max(80).required(),
