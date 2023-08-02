@@ -6,9 +6,13 @@ const { port } = process.env;
 
 const getEntradas = require("./rutas/rutasentradas");
 
+const getUsuarios = require("./rutas/rutasusuarios");
+
 app.use(express.json());
 
 app.use("/entradas", getEntradas);
+
+app.use("/usuarios", getUsuarios);
 
 // Pagina no encontrada
 app.use((req, res, next) => {
