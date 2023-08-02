@@ -4,6 +4,8 @@ const controlador = require("../controller/usuarioscontroller");
 
 //Registro de usuario
 router.post('/registro', controlador.registro);
+//Validar registro
+router.get('/validacion/:codigoRegistro', controlador.validarCodigo)
 
 
 module.exports = router
