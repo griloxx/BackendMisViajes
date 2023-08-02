@@ -1,29 +1,27 @@
-const nodeMailer = require("nodemailer");
+const nodemailer = require("nodemailer");
 const sendGridTransport = require("nodemailer-sendgrid");
 
-const {
-    SMPT_USER,
-    SENDGRID_KEY,
-} = process.env
+const { SMPT_USER, SENDGRID_KEY } = process.env
 
-const transporte = nodeMailer.createTransport(
+const transporte = nodemailer.createTransport(
     sendGridTransport({
         apiKey: SENDGRID_KEY
     })
 )
 
-async function enviarEmail(email, asunto, cuerpo){
+async function sendMail(email, subject, cuerpo){
     try {
         const opciones = {
             from: SMPT_USER,
             to: email,
-            asunto,
+            subject,
             text: cuerpo
         }
-        await transporte.enviarEmail(opciones)
+
+        await transporte.sendMail(opciones)
     } catch (error) {
-        return (error)
+        return error
     }
 }
 
-module.exports = enviarEmail;
+module.exports = sendMail;

@@ -6,7 +6,7 @@ const esquemaRegistro = require("../schemas/nuevousuario.js");
 const { crearUsuario } = require("../db/queries/queriesusuarios.js");
 const { validacionUsuario } = require("../helpers/validacionemail.js");
 
-const enviarEmail = require("../servicios/envioemail.js");
+const sendMail = require("../servicios/envioemail.js");
 
 // Controlador de registro de usuarios
 async function registro(req, res, next) {
@@ -34,8 +34,12 @@ async function registro(req, res, next) {
     const emailCuerpo = validacionUsuario(name, codigoRegistro);
 
     //Enviamos el email de verificacion
-    const emailVerificacion = await enviarEmail(email,emailAsunto, emailCuerpo);
-    if(emailVerificacion instanceof Error)next(emailVerificacion);
+    const emailVerificacion = await sendMail(email,emailAsunto, emailCuerpo);
+    if(emailVerificacion instanceof Error) throw emailVerificacion
+    res.send({
+        status: "ok",
+        message: "usuario creado, revisa el email de verificación"
+    })
   } catch (error) {
     next(error);
   }
