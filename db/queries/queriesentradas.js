@@ -42,7 +42,7 @@ async function getConsulta(lugar, categoria, votos = "entradilla") {
     } else if (consulta2.length > 0) {
       return consulta2;
     } else {
-      return (consulta3 = "No se han encontrado coincidencias");
+      return consulta3 = "No se han encontrado coincidencias";
     }
   } finally {
     if (connection) {

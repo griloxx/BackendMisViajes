@@ -7,7 +7,6 @@ router.get("/", controlador.listar);
 
 router.get("/consulta", controlador.consulta);
 
-router.get("/consultavotos", controlador.consulta);
 
 //Exportamos módulo
 module.exports = router;

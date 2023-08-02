@@ -10,12 +10,13 @@ app.use(express.json());
 
 app.use("/entradas", getEntradas);
 
-// Errores del sistema
+// Pagina no encontrada
 app.use((req, res, next) => {
   res.status(404);
   res.send("pagina no encontrada");
 });
 
+// Errores del sistema
 app.use((err, req, res, next) => {
   // Si el error tiene el nombre "ValidationError", quiere decir que es un error tirado por Joi, así que le ponemos un statusCode 400
   if (err.name === "ValidationError") {

@@ -1,5 +1,5 @@
 const { getAll, getConsulta } = require("../db/queries/queriesentradas");
-const generarError = require("../helpers/generarError");
+// const generarError = require("../helpers/generarError");
 
 // Función asincrona para realizar una busqueda de todas las entradas
 async function listar(req, res, next) {
