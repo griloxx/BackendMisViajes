@@ -7,7 +7,6 @@ const { crearUsuario, actualizarCodigo } = require("../db/queries/queriesusuario
 const { validacionUsuario } = require("../helpers/validacionemail.js");
 
 const sendMail = require("../servicios/envioemail.js");
-const { func } = require("joi");
 
 // Controlador de registro de usuarios
 async function registro(req, res, next) {
