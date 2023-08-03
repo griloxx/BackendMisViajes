@@ -38,8 +38,8 @@ async function guardarFoto(
       sharpImg2 = sharp(foto2.data);
       sharpImg2.resize(500);
       nombreAletorio2 = crypto.randomUUID();
-      extension2 = path.extname(foto2);
-      nombreFoto2 = `${nombreAletorio}${extension}`;
+      extension2 = path.extname(foto2.name);
+      nombreFoto2 = `${nombreAletorio2}${extension}`;
       rutaCompleta2 = path.join(rutaFoto, nombreFoto2);
       sharpImg2.toFile(rutaCompleta2);
       fotos.push(nombreFoto2);
@@ -48,8 +48,8 @@ async function guardarFoto(
       sharpImg3 = sharp(foto3.data);
       sharpImg3.resize(500);
       nombreAletorio3 = crypto.randomUUID();
-      extension3 = path.extname(foto3);
-      nombreFoto3 = `${nombreAletorio}${extension}`;
+      extension3 = path.extname(foto3.name);
+      nombreFoto3 = `${nombreAletorio3}${extension}`;
       rutaCompleta3 = path.join(rutaFoto, nombreFoto3);
       sharpImg3.toFile(rutaCompleta3);
       fotos.push(nombreFoto3);
@@ -58,8 +58,8 @@ async function guardarFoto(
       sharpImg4 = sharp(foto4.data);
       sharpImg4.resize(500);
       nombreAletorio4 = crypto.randomUUID();
-      extension4 = path.extname(foto4);
-      nombreFoto4 = `${nombreAletorio}${extension}`;
+      extension4 = path.extname(foto4.name);
+      nombreFoto4 = `${nombreAletorio4}${extension}`;
       rutaCompleta4 = path.join(rutaFoto, nombreFoto4);
       sharpImg4.toFile(rutaCompleta4);
       fotos.push(nombreFoto4);
@@ -69,14 +69,14 @@ async function guardarFoto(
       sharpImg5 = sharp(foto5.data);
       sharpImg5.resize(500);
       nombreAletorio5 = crypto.randomUUID();
-      extension5 = path.extname(foto5);
-      nombreFoto5 = `${nombreAletorio}${extension}`;
+      extension5 = path.extname(foto5.name);
+      nombreFoto5 = `${nombreAletorio5}${extension}`;
       rutaCompleta5 = path.join(rutaFoto, nombreFoto5);
       sharpImg5.toFile(rutaCompleta5);
       fotos.push(nombreFoto5);
     }
 
-    return nombreFoto;
+    return fotos;
   } catch (error) {
     generarError("No se ha podido guardar la foto ");
   }
