@@ -1,5 +1,8 @@
 const { getAll, getConsulta } = require("../db/queries/queriesentradas");
+const generarError = require("../helpers/generarError");
 // const generarError = require("../helpers/generarError");
+const esquemasEntradas = require("../schemas/esquemasentradas");
+const guardarFoto = require("../servicios/savephoto");
 
 // Función asincrona para listar de todas las entradas
 async function listar(req, res, next) {
@@ -34,5 +37,19 @@ async function consulta(req, res, next) {
   }
 }
 
+async function crear(req, res, next) {
+  try {
+    await esquemasEntradas.validateAsync(req.body);
+    const { titulo, categoria, lugar, texto, user_id } = req.body;
+    const { foto, foto2, foto3, foto4, foto5 } = req.files;
+    if (!foto) {
+      generarError("La foto es obligatoria", 400);
+    }
+    const savephoto = await guardarFoto(foto, foto2, foto3, foto4, foto5);
+    res.json(savephoto);
+  } catch (error) {
+    next(error);
+  }
+}
 // Esportamos las funciones creadas
-module.exports = { listar, consulta };
+module.exports = { listar, consulta, crear };
