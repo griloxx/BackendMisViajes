@@ -9,4 +9,9 @@ const esquemaRegistro = joi.object({
     avatar: joi.string(),
 })
 
-module.exports = esquemaRegistro;
+const esquemaLogin = joi.object({
+    email: joi.required(),
+    password: joi.required(),
+})
+
+module.exports = {esquemaRegistro, esquemaLogin};

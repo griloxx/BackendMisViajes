@@ -2,18 +2,19 @@ const crypto = require("node:crypto");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const esquemaRegistro = require("../schemas/nuevousuario.js");
-const { crearUsuario, actualizarCodigo } = require("../db/queries/queriesusuarios.js");
+const { esquemaRegistro, esquemaLogin } = require("../schemas/esquemasusuarios.js");
+const { crearUsuario, actualizarCodigo, getUsuarioBy } = require("../db/queries/queriesusuarios.js");
 const { validacionUsuario } = require("../helpers/validacionemail.js");
 
 const sendMail = require("../servicios/envioemail.js");
+const generarError = require("../helpers/generarError.js");
 
 // Controlador de registro de usuarios
 async function registro(req, res, next) {
   try {
     await esquemaRegistro.validateAsync(req.body);
     const { name, email, password, avatar } = req.body;
-
+    
     //Generar codigo de registro
     const codigoRegistro = crypto.randomUUID();
 
@@ -44,7 +45,7 @@ async function registro(req, res, next) {
     next(error);
   }
 }
-
+// Controlador para activar usuario
 async function validarCodigo(req, res, next) {
     try {
         // Cogemos el codigo de registro de los params
@@ -59,8 +60,50 @@ async function validarCodigo(req, res, next) {
     } catch (error) {
         next(error)
     }
-
-
 }
 
-module.exports = { registro, validarCodigo };
+async function login(req, res, next) {
+  try {
+
+    // Validamos con esquema joi
+    await esquemaLogin.validateAsync(req.body);
+    const { email, password } = req.body;
+
+    // Consultadomos a la BD que exista ese usuario
+    const usuario = await getUsuarioBy({email});
+
+    // Si no existe mensaje común para no dar detalles excesivos por seguridad
+    if(usuario < 1) generarError('Usuario o contraseña errónea.', 401);
+
+    // Comparamos contraseñas
+    const autorizado = await bcrypt.compare(password, usuario.password);
+
+    // Si no coinciden Mensaje común para no dar detalles excesivos por seguridad
+    if(!autorizado) generarError('Usuario o contraseña errónea.', 401);
+
+    // Creamos objeto con los datos que queremos del usuario en el token
+    const tokenInfo = {
+      id: usuario.id,
+      avatar: usuario.avatar
+    }
+
+    // Creamos el token firmado
+    const token = jwt.sign(tokenInfo, process.env.LLAVE_SECRETA, {
+      expiresIn: '1d'
+    });
+
+    res.json({
+      status: 'ok',
+      data: {
+        token
+      }
+    })
+
+
+  } catch (error) {
+    next(error);
+  }
+  
+  
+}
+module.exports = { registro, validarCodigo, login };

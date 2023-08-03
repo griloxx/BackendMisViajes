@@ -1,3 +1,4 @@
+const { array } = require("joi");
 const generarError = require("../../helpers/generarError");
 const getPool = require("../pool");
 
@@ -50,4 +51,25 @@ async function actualizarCodigo(codigoRegistro) {
   }
 }
 
-module.exports = { crearUsuario, actualizarCodigo };
+async function getUsuarioBy(objecto) {
+
+  const [llave] = Object.keys(objecto);
+  const valor = objecto[llave];
+
+  let connection;
+  try {
+
+    connection = await getPool();
+    const [usuario] = await connection.query(
+      "SELECT * FROM usuarios WHERE ?? = ?",
+      [llave, valor]
+    );
+
+    return usuario[0];
+
+  } finally {
+    if(connection) connection.release()
+  }
+}
+
+module.exports = { crearUsuario, actualizarCodigo, getUsuarioBy };

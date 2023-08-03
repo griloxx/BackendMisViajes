@@ -7,5 +7,7 @@ router.post('/registro', controlador.registro);
 //Validar registro
 router.get('/validacion/:codigoRegistro', controlador.validarCodigo)
 
+// Login de usuario
+router.post("/login", controlador.login);
 
 module.exports = router
