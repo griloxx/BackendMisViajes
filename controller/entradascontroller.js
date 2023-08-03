@@ -45,7 +45,7 @@ async function crear(req, res, next) {
     if (!foto) {
       generarError("La foto es obligatoria", 400);
     }
-    const savephoto = await guardarFoto(foto, foto2, foto3, foto4, foto5);
+    const savephoto = await guardarFoto([foto, foto2, foto3, foto4, foto5]);
     res.json(savephoto);
   } catch (error) {
     next(error);

@@ -5,13 +5,8 @@ const sharp = require("sharp");
 const { RUTA_FOTOS } = process.env;
 const generarError = require("../helpers/generarError");
 
-async function guardarFoto(
-  foto,
-  foto2 = null,
-  foto3 = null,
-  foto4 = null,
-  foto5 = null
-) {
+async function guardarFoto(fotos) {
+
   try {
     const rutaFoto = path.resolve(__dirname, "../", RUTA_FOTOS);
 
@@ -22,61 +17,21 @@ async function guardarFoto(
     } catch {
       await fs.mkdir(rutaFoto);
     }
-    let fotos = [];
-
-    //Ajustamos la foto
-    const sharpImg = sharp(foto.data);
-    sharpImg.resize(500);
-    const nombreAletorio = crypto.randomUUID();
-    const extension = path.extname(foto.name);
-    const nombreFoto = `${nombreAletorio}${extension}`;
-    const rutaCompleta = path.join(rutaFoto, nombreFoto);
-    sharpImg.toFile(rutaCompleta);
-    fotos.push(nombreFoto);
-
-    if (foto2) {
-      sharpImg2 = sharp(foto2.data);
-      sharpImg2.resize(500);
-      nombreAletorio2 = crypto.randomUUID();
-      extension2 = path.extname(foto2.name);
-      nombreFoto2 = `${nombreAletorio2}${extension}`;
-      rutaCompleta2 = path.join(rutaFoto, nombreFoto2);
-      sharpImg2.toFile(rutaCompleta2);
-      fotos.push(nombreFoto2);
-    }
-    if (foto3) {
-      sharpImg3 = sharp(foto3.data);
-      sharpImg3.resize(500);
-      nombreAletorio3 = crypto.randomUUID();
-      extension3 = path.extname(foto3.name);
-      nombreFoto3 = `${nombreAletorio3}${extension}`;
-      rutaCompleta3 = path.join(rutaFoto, nombreFoto3);
-      sharpImg3.toFile(rutaCompleta3);
-      fotos.push(nombreFoto3);
-    }
-    if (foto4) {
-      sharpImg4 = sharp(foto4.data);
-      sharpImg4.resize(500);
-      nombreAletorio4 = crypto.randomUUID();
-      extension4 = path.extname(foto4.name);
-      nombreFoto4 = `${nombreAletorio4}${extension}`;
-      rutaCompleta4 = path.join(rutaFoto, nombreFoto4);
-      sharpImg4.toFile(rutaCompleta4);
-      fotos.push(nombreFoto4);
-    }
-
-    if (foto5) {
-      sharpImg5 = sharp(foto5.data);
-      sharpImg5.resize(500);
-      nombreAletorio5 = crypto.randomUUID();
-      extension5 = path.extname(foto5.name);
-      nombreFoto5 = `${nombreAletorio5}${extension}`;
-      rutaCompleta5 = path.join(rutaFoto, nombreFoto5);
-      sharpImg5.toFile(rutaCompleta5);
-      fotos.push(nombreFoto5);
-    }
-
-    return fotos;
+    let nombreFotos = []
+    fotos.forEach((archivo) => {
+      if(archivo !== undefined) {
+        const sharpImg = sharp(archivo.data);
+        sharpImg.resize(500);
+        const nombreAletorio = crypto.randomUUID();
+        const extension = path.extname(archivo.name);
+        const nombreFoto = `${nombreAletorio}${extension}`;
+        const rutaCompleta = path.join(rutaFoto, nombreFoto);
+        sharpImg.toFile(rutaCompleta);
+        nombreFotos.push(nombreFoto);
+      }
+    })
+    
+    return nombreFotos;
   } catch (error) {
     generarError("No se ha podido guardar la foto ");
   }
