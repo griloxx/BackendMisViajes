@@ -42,7 +42,7 @@ async function getConsulta(lugar, categoria, votos = "entradilla") {
     } else if (consulta2.length > 0) {
       return consulta2;
     } else {
-      return consulta3 = "No se han encontrado coincidencias";
+      return (consulta3 = "No se han encontrado coincidencias");
     }
   } finally {
     if (connection) {
@@ -51,8 +51,38 @@ async function getConsulta(lugar, categoria, votos = "entradilla") {
   }
 }
 
+async function entradaNueva(
+  titulo,
+  categoria,
+  lugar,
+  texto,
+  user_id,
+  savePhoto
+) {
+  let connection;
+
+  try {
+    connection = await getPool();
+
+    const insertarEntrada = connection.query(
+      "INSERT INTO entradas (titulo, categoria, lugar, texto, user_id, foto) VALUES(?,?,?,?,?,?)",
+      [titulo, categoria, lugar, texto, user_id, savePhoto[0]]
+    );
+    savePhoto.forEach((foto, i = 1) => {
+      if (i !== 1) {
+        connection.query("INSERT INTO entradas (foto" + i + ") VALUES (?)", [
+          foto,
+        ]);
+        i++;
+      }
+    });
+  } finally {
+    if (connection) connection.release();
+  }
+}
 // Exportamos las funciones
 module.exports = {
   getAll,
   getConsulta,
+  entradaNueva,
 };

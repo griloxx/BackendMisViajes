@@ -1,4 +1,8 @@
-const { getAll, getConsulta } = require("../db/queries/queriesentradas");
+const {
+  getAll,
+  getConsulta,
+  entradaNueva,
+} = require("../db/queries/queriesentradas");
 const generarError = require("../helpers/generarError");
 // const generarError = require("../helpers/generarError");
 const esquemasEntradas = require("../schemas/esquemasentradas");
@@ -43,10 +47,17 @@ async function crear(req, res, next) {
     const { titulo, categoria, lugar, texto, user_id } = req.body;
     const { foto, foto2, foto3, foto4, foto5 } = req.files;
     if (!foto) {
-      generarError("La foto es obligatoria", 400);
+      generarError("Al menos una foto es obligatoria", 400);
     }
-    const savephoto = await guardarFoto([foto, foto2, foto3, foto4, foto5]);
-    res.json(savephoto);
+    //Guardar fotos en la carpeta fotos
+
+    const savePhoto = await guardarFoto([foto, foto2, foto3, foto4, foto5]);
+
+    //Guardar entrada en la BD
+
+    await entradaNueva(titulo, categoria, lugar, texto, user_id, savePhoto);
+
+    res.send("Entrada guardada con éxito");
   } catch (error) {
     next(error);
   }
