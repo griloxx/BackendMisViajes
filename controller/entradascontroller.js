@@ -4,7 +4,6 @@ const {
   entradaNueva,
 } = require("../db/queries/queriesentradas");
 const generarError = require("../helpers/generarError");
-// const generarError = require("../helpers/generarError");
 const esquemasEntradas = require("../schemas/esquemasentradas");
 const guardarFoto = require("../servicios/savephoto");
 
@@ -43,6 +42,7 @@ async function consulta(req, res, next) {
 
 async function crear(req, res, next) {
   try {
+    
     await esquemasEntradas.validateAsync(req.body);
     const { titulo, categoria, lugar, texto, user_id } = req.body;
     const { foto, foto2, foto3, foto4, foto5 } = req.files;

@@ -10,6 +10,7 @@ const {
   crearUsuario,
   actualizarCodigo,
   getUsuarioBy,
+  comprobarActivo,
 } = require("../db/queries/queriesusuarios.js");
 const { validacionUsuario } = require("../helpers/validacionemail.js");
 
@@ -86,6 +87,11 @@ async function login(req, res, next) {
 
     // Si no coinciden Mensaje común para no dar detalles excesivos por seguridad
     if (!autorizado) generarError("Usuario o contraseña errónea.", 401);
+
+    const usuarioActivado = await comprobarActivo(usuario.id);
+
+    // Si hay codigo de registro lanzamos error
+    if(usuarioActivado > 0) generarError('Usuario no activado', 401);
 
     // Creamos objeto con los datos que queremos del usuario en el token
     const tokenInfo = {

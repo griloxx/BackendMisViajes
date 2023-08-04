@@ -1,4 +1,3 @@
-const { array } = require("joi");
 const generarError = require("../../helpers/generarError");
 const getPool = require("../pool");
 
@@ -51,6 +50,25 @@ async function actualizarCodigo(codigoRegistro) {
   }
 }
 
+async function comprobarActivo(id) {
+
+  let connection;
+  try {
+    connection = await getPool();
+    // Comprobamos que el codigo de registro ya está borrado
+    const verificar = await connection.query(
+      "SELECT codigoRegistro FROM usuarios WHERE id = ?",
+      [id]
+    )
+
+      return verificar;
+
+  } finally {
+    if(connection) connection.release();
+    
+  }
+}
+
 async function getUsuarioBy(objecto) {
 
   const [llave] = Object.keys(objecto);
@@ -72,4 +90,4 @@ async function getUsuarioBy(objecto) {
   }
 }
 
-module.exports = { crearUsuario, actualizarCodigo, getUsuarioBy };
+module.exports = { crearUsuario, actualizarCodigo, getUsuarioBy, comprobarActivo };
