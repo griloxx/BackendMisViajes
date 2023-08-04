@@ -5,6 +5,7 @@ const {
   votar,
   getId,
   deleteEntrada,
+  comentarRecomendacion
 } = require("../db/queries/queriesentradas");
 const generarError = require("../helpers/generarError");
 const esquemasEntradas = require("../schemas/esquemasentradas");
@@ -61,8 +62,9 @@ async function consulta(req, res, next) {
 async function crear(req, res, next) {
   try {
     await esquemasEntradas.validateAsync(req.body);
-    const { titulo, categoria, lugar, texto, user_id } = req.body;
+    const { titulo, categoria, lugar, texto } = req.body;
     const { foto, foto2, foto3, foto4, foto5 } = req.files;
+    const { id } = req.user
     if (!foto) {
       generarError("Al menos una foto es obligatoria", 400);
     }
@@ -77,7 +79,7 @@ async function crear(req, res, next) {
       categoria,
       lugar,
       texto,
-      user_id,
+      id,
       savePhoto
     );
 
@@ -126,18 +128,22 @@ async function borrarEntrada(req, res, next) {
 }
 
 // Controlador para comentar entradas
-async function comentarEntrada() {
+async function comentarEntrada(req, res, next) {
 
   try {
     // Recibimos el comentario del usuario o mandamos error
-    const { comentario } = req.body;
+    const { comentario, entrada_id} = req.body;
+    const { foto } = req.files;
+    const { id } = req.user;
+    
     if(!comentario)generarError('El campo comentario no puede estar vacio', 400);
-
-    const comentar = await comentarRecomendacion(comentario);
-
+    //Guardamos la foto en la carpeta de fotos
+    const nombreFoto = await guardarFoto([foto]);
+    
+    const comentar = await comentarRecomendacion(comentario, entrada_id, id, nombreFoto);
 
     res.json({
-      status: onkeydown,
+      status: "ok",
       message: 'Comentario insertado con éxito',
       data: comentar
     });

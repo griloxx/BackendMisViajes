@@ -7,11 +7,11 @@ const usuarioExiste = require("../milddlewares/usuarioExiste");
 // Ruta para listar los Registros general
 router.get("/", controlador.listar);
 
-// Ruta para ver Detalles de Registros Recomendados
-router.get("/:id", controlador.detalles);
-
 // Ruta de búsqueda por lugar y/o categoría
 router.get("/consulta", controlador.consulta);
+// Ruta para ver Detalles de Registros Recomendados
+router.get("/consulta/:id", controlador.detalles);
+
 //Ruta para crear la recomendación
 router.post("/crearentrada", autenticacion, usuarioExiste, controlador.crear);
 //Ruta para los votos

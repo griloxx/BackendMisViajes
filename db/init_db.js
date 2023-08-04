@@ -88,5 +88,5 @@ async function initDb () {
         }
 
 
-        getPool()
-        initDb();
+getPool()
+initDb();
