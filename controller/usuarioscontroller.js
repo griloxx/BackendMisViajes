@@ -11,11 +11,13 @@ const {
   actualizarCodigo,
   getUsuarioBy,
   comprobarActivo,
+  editarPerfil
 } = require("../db/queries/queriesusuarios.js");
 const { validacionUsuario } = require("../helpers/validacionemail.js");
 
 const sendMail = require("../servicios/envioemail.js");
 const generarError = require("../helpers/generarError.js");
+const guardarAvatar = require("../servicios/avatar.js");
 
 // Controlador de registro de usuarios
 async function registro(req, res, next) {
@@ -114,4 +116,33 @@ async function login(req, res, next) {
     next(error);
   }
 }
-module.exports = { registro, validarCodigo, login };
+
+async function modificarPerfil(req, res, next) {
+
+ try {
+  const { id } = req.user;
+  const { name, password } = req.body;
+  let nombreAvatar;
+  let passwordHash;
+  
+  if(password !== undefined) {
+    passwordHash = await bcrypt.hash(password, 10);
+  }
+  
+  if(req.files !== null) {
+    const { avatar } = req.files;
+    nombreAvatar = await guardarAvatar(avatar);
+  }
+
+  await editarPerfil(id, name, passwordHash, nombreAvatar);
+
+  res.json({
+    status: "ok",
+    message: "Datos actualizados correctamente"
+  })
+
+ } catch (error) {
+  next(error)
+ }
+}
+module.exports = { registro, validarCodigo, login, modificarPerfil };

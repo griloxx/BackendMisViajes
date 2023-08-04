@@ -90,4 +90,35 @@ async function getUsuarioBy(objecto) {
   }
 }
 
-module.exports = { crearUsuario, actualizarCodigo, getUsuarioBy, comprobarActivo };
+async function editarPerfil(id, name, password = null, avatar = null) {
+
+  let connection;
+  try {
+    connection = await getPool();
+
+    if (password === null) {
+      [passwordBd] = await connection.query(
+        "SELECT password FROM usuarios WHERE id = ?",
+        [id]
+      );
+      password = passwordBd[0].password;
+      await connection.query(
+        "UPDATE usuarios SET name = ?, password = ?, avatar = ? WHERE id = ?",
+        [name, password, avatar, id]
+      );
+    }
+
+  
+    await connection.query(
+      "UPDATE usuarios SET name = ?, password = ?, avatar = ? WHERE id = ?",
+      [name, password, avatar, id]
+    );
+
+  } finally {
+    if(connection) connection.release();
+  }
+
+
+}
+
+module.exports = { crearUsuario, actualizarCodigo, getUsuarioBy, comprobarActivo, editarPerfil };

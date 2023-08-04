@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const controlador = require("../controller/usuarioscontroller");
+const autenticacion = require('../milddlewares/autenticacion');
+const usuarioExiste = require('../milddlewares/usuarioExiste');
 
 //Registro de usuario
 router.post('/registro', controlador.registro);
@@ -10,4 +12,7 @@ router.get('/validacion/:codigoRegistro', controlador.validarCodigo)
 // Login de usuario
 router.post("/login", controlador.login);
 
-module.exports = router
+// Modificar perfil
+router.post('/perfil', autenticacion, usuarioExiste, controlador.modificarPerfil)
+
+module.exports = router 
