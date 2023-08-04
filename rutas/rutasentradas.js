@@ -12,7 +12,7 @@ router.get("/consulta", controlador.consulta);
 //Ruta para crear la recomendación
 router.post("/crearentrada", autenticacion, usuarioExiste, controlador.crear);
 //Ruta para los votos
-router.post("/votar", controlador.votarEntrada);
+router.post("/votar", autenticacion, usuarioExiste, controlador.votarEntrada);
 
 //Exportamos módulo
 module.exports = router;
