@@ -1,7 +1,9 @@
+const { func } = require("joi");
 const {
   getAll,
   getConsulta,
   entradaNueva,
+  votar,
 } = require("../db/queries/queriesentradas");
 const generarError = require("../helpers/generarError");
 const esquemasEntradas = require("../schemas/esquemasentradas");
@@ -42,7 +44,6 @@ async function consulta(req, res, next) {
 
 async function crear(req, res, next) {
   try {
-    
     await esquemasEntradas.validateAsync(req.body);
     const { titulo, categoria, lugar, texto, user_id } = req.body;
     const { foto, foto2, foto3, foto4, foto5 } = req.files;
@@ -55,16 +56,39 @@ async function crear(req, res, next) {
 
     //Guardar entrada en la BD
 
-    const insertarEntrada = await entradaNueva(titulo, categoria, lugar, texto, user_id, savePhoto);
+    const insertarEntrada = await entradaNueva(
+      titulo,
+      categoria,
+      lugar,
+      texto,
+      user_id,
+      savePhoto
+    );
 
     res.json({
       status: "ok",
       message: "Entrada insertada con éxito",
-      data: insertarEntrada
+      data: insertarEntrada,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function votarEntrada(req, res, next) {
+  try {
+    const { id } = req.body;
+
+    const votos = await votar(id);
+
+    res.json({
+      status: "ok",
+      message: "voto sumado con éxito",
+      data: votos,
     });
   } catch (error) {
     next(error);
   }
 }
 // Esportamos las funciones creadas
-module.exports = { listar, consulta, crear };
+module.exports = { listar, consulta, crear, votarEntrada };

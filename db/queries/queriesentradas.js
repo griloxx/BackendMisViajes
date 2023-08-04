@@ -51,6 +51,7 @@ async function getConsulta(lugar, categoria, votos = "entradilla") {
   }
 }
 
+// Creación de una entrada nueva por un usuario registrado
 async function entradaNueva(
   titulo,
   categoria,
@@ -69,22 +70,49 @@ async function entradaNueva(
       [titulo, categoria, lugar, texto, user_id, savePhoto[0]]
     );
 
-    for( i = 1; i <= savePhoto.length; i++) {
-      if(i !== 1) {
-        await connection.query("UPDATE entradas SET foto" + i + " = ? WHERE id = ?",
-        [savePhoto[--i], insertarEntrada.insertId]
+    for (i = 1; i <= savePhoto.length; i++) {
+      if (i !== 1) {
+        await connection.query(
+          "UPDATE entradas SET foto" + i + " = ? WHERE id = ?",
+          [savePhoto[--i], insertarEntrada.insertId]
         );
-        i++
+        i++;
       }
     }
-    return insertarEntrada.insertId
+    return insertarEntrada.insertId;
   } finally {
     if (connection) connection.release();
   }
 }
+
+// Votar una recomendación por un usuario registrado
+
+async function votar(id) {
+  let connection;
+  try {
+    connection = await getPool();
+    let [votos] = await connection.query(
+      "SELECT votos FROM entradas WHERE id = ?",
+      [id]
+    );
+
+    votos[0] = votos[0] + 1;
+    console.log([votos]);
+    await connection.query("UPDATE entradas SET votos = ? WHERE id = ?", [
+      votos,
+      id,
+    ]);
+    console.log(votos);
+    return votos;
+  } finally {
+    if (connection) connection.release();
+  }
+}
+
 // Exportamos las funciones
 module.exports = {
   getAll,
   getConsulta,
   entradaNueva,
+  votar,
 };
