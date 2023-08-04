@@ -20,6 +20,26 @@ async function getAll(votos = "entradilla") {
   }
 }
 
+// Ver detalles entrada recomendada
+
+async function getAll() {
+  let connection;
+
+  try {
+    connection = await getPool();
+
+    const [entradas] = await connection.query(
+      "SELECT * FROM entradas ORDER BY id DESC LIMIT 1",
+    );
+
+    return entradas;
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
+}
+
 // Filtrar por lugar o categoría ordenado por votos o fecha(Entradilla)
 async function getConsulta(lugar, categoria, votos = "entradilla") {
   let connection;

@@ -17,6 +17,19 @@ async function listar(req, res, next) {
   }
 }
 
+// Función asíncrona para ver detalles de una entrada recomendada
+
+async function detalles(res, next) {
+  let entradas;
+  try {
+    entradas = await getAll();
+    res.json(entradas);
+  } catch (error) {
+    next(error);
+  }
+}
+
+
 // Función asincrona para realizar consultas de lugar y/o categoria
 async function consulta(req, res, next) {
   let consulta;
@@ -35,4 +48,4 @@ async function consulta(req, res, next) {
 }
 
 // Esportamos las funciones creadas
-module.exports = { listar, consulta };
+module.exports = { listar, consulta, detalles};
