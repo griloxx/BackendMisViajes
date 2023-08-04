@@ -55,9 +55,13 @@ async function crear(req, res, next) {
 
     //Guardar entrada en la BD
 
-    await entradaNueva(titulo, categoria, lugar, texto, user_id, savePhoto);
+    const insertarEntrada = await entradaNueva(titulo, categoria, lugar, texto, user_id, savePhoto);
 
-    res.send("Entrada guardada con éxito");
+    res.json({
+      status: "ok",
+      message: "Entrada insertada con éxito",
+      data: insertarEntrada
+    });
   } catch (error) {
     next(error);
   }

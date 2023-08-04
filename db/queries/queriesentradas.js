@@ -75,9 +75,9 @@ async function entradaNueva(
         [savePhoto[--i], insertarEntrada.insertId]
         );
         i++
-
       }
     }
+    return insertarEntrada.insertId
   } finally {
     if (connection) connection.release();
   }
