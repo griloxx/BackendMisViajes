@@ -4,6 +4,7 @@ const {
   getConsulta,
   entradaNueva,
   votar,
+  getId,
 } = require("../db/queries/queriesentradas");
 const generarError = require("../helpers/generarError");
 const esquemasEntradas = require("../schemas/esquemasentradas");
@@ -27,10 +28,12 @@ async function listar(req, res, next) {
 
 // Función asíncrona para ver detalles de una entrada recomendada
 
-async function detalles(res, next) {
+async function detalles(req, res, next) {
+  const {id} = req.params
   let entradas;
   try {
-    entradas = await getAll();
+    entradas = await getId(id);
+    if (entradas < 1) generarError ("La entrada no existe", 400)
     res.json(entradas);
   } catch (error) {
     next(error);
@@ -104,4 +107,4 @@ async function votarEntrada(req, res, next) {
   }
 }
 // Esportamos las funciones creadas
-module.exports = { listar, consulta, crear, votarEntrada };
+module.exports = { detalles, listar, consulta, crear, votarEntrada };

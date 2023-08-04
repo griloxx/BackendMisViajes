@@ -22,14 +22,15 @@ async function getAll(votos = "entradilla") {
 
 // Ver detalles entrada recomendada
 
-async function getAll() {
+async function getId(id) {
   let connection;
 
   try {
     connection = await getPool();
 
     const [entradas] = await connection.query(
-      "SELECT * FROM entradas ORDER BY id DESC LIMIT 1",
+      "SELECT * FROM entradas WHERE id = ?",
+      [id]
     );
 
     return entradas;
@@ -135,4 +136,5 @@ module.exports = {
   getConsulta,
   entradaNueva,
   votar,
+  getId,
 };
