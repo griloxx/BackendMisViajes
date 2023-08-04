@@ -1,5 +1,13 @@
-const { getAll, getConsulta } = require("../db/queries/queriesentradas");
-// const generarError = require("../helpers/generarError");
+const { func } = require("joi");
+const {
+  getAll,
+  getConsulta,
+  entradaNueva,
+  votar,
+} = require("../db/queries/queriesentradas");
+const generarError = require("../helpers/generarError");
+const esquemasEntradas = require("../schemas/esquemasentradas");
+const guardarFoto = require("../servicios/savephoto");
 
 // Función asincrona para listar de todas las entradas
 async function listar(req, res, next) {
@@ -47,5 +55,53 @@ async function consulta(req, res, next) {
   }
 }
 
+async function crear(req, res, next) {
+  try {
+    await esquemasEntradas.validateAsync(req.body);
+    const { titulo, categoria, lugar, texto, user_id } = req.body;
+    const { foto, foto2, foto3, foto4, foto5 } = req.files;
+    if (!foto) {
+      generarError("Al menos una foto es obligatoria", 400);
+    }
+    //Guardar fotos en la carpeta fotos
+
+    const savePhoto = await guardarFoto([foto, foto2, foto3, foto4, foto5]);
+
+    //Guardar entrada en la BD
+
+    const insertarEntrada = await entradaNueva(
+      titulo,
+      categoria,
+      lugar,
+      texto,
+      user_id,
+      savePhoto
+    );
+
+    res.json({
+      status: "ok",
+      message: "Entrada insertada con éxito",
+      data: insertarEntrada,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function votarEntrada(req, res, next) {
+  try {
+    const { id } = req.body;
+
+    const votos = await votar(id);
+
+    res.json({
+      status: "ok",
+      message: "voto sumado con éxito",
+      data: votos,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
 // Esportamos las funciones creadas
-module.exports = { listar, consulta, detalles};
+module.exports = { listar, consulta, crear, votarEntrada };
