@@ -64,18 +64,20 @@ async function entradaNueva(
   try {
     connection = await getPool();
 
-    const insertarEntrada = connection.query(
+    const [insertarEntrada] = await connection.query(
       "INSERT INTO entradas (titulo, categoria, lugar, texto, user_id, foto) VALUES(?,?,?,?,?,?)",
       [titulo, categoria, lugar, texto, user_id, savePhoto[0]]
     );
-    savePhoto.forEach((foto, i = 1) => {
-      if (i !== 1) {
-        connection.query("INSERT INTO entradas (foto" + i + ") VALUES (?)", [
-          foto,
-        ]);
-        i++;
+
+    for( i = 1; i <= savePhoto.length; i++) {
+      if(i !== 1) {
+        await connection.query("UPDATE entradas SET foto" + i + " = ? WHERE id = ?",
+        [savePhoto[--i], insertarEntrada.insertId]
+        );
+        i++
+
       }
-    });
+    }
   } finally {
     if (connection) connection.release();
   }
