@@ -96,14 +96,14 @@ async function votar(id) {
       [id]
     );
 
-    votos[0] = votos[0] + 1;
-    console.log([votos]);
+    valorVotos = votos[0].votos + 1;
+
     await connection.query("UPDATE entradas SET votos = ? WHERE id = ?", [
-      votos,
+      valorVotos,
       id,
     ]);
-    console.log(votos);
-    return votos;
+
+    return valorVotos;
   } finally {
     if (connection) connection.release();
   }
