@@ -1,10 +1,10 @@
-const { func } = require("joi");
 const {
   getAll,
   getConsulta,
   entradaNueva,
   votar,
   getId,
+  deleteEntrada,
 } = require("../db/queries/queriesentradas");
 const generarError = require("../helpers/generarError");
 const esquemasEntradas = require("../schemas/esquemasentradas");
@@ -106,5 +106,25 @@ async function votarEntrada(req, res, next) {
     next(error);
   }
 }
+
+// Borrar entrada por usuario
+
+async function borrarEntrada(req, res, next) {
+  try {
+    const { id } = req.body;
+    
+    const borrar = await deleteEntrada(id);
+
+    if (borrar.affectedRows < 1) generarError ("La entrada no existe.", 404)
+    res.json({
+      status: "ok",
+      message: "Recomendación borrada con éxito",
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 // Esportamos las funciones creadas
-module.exports = { detalles, listar, consulta, crear, votarEntrada };
+module.exports = { detalles, listar, consulta, crear, votarEntrada, borrarEntrada };
+

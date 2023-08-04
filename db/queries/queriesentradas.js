@@ -130,6 +130,27 @@ async function votar(id) {
   }
 }
 
+// Borrar una entrada por un usuario registrado
+async function deleteEntrada(id) {
+  let connection;
+
+  try {
+    connection = await getPool();
+
+    const [borrarEntrada] = await connection.query(
+      "DELETE FROM entradas WHERE id = ?",
+      [id]
+    );
+    
+    return borrarEntrada;
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
+}
+
+
 // Exportamos las funciones
 module.exports = {
   getAll,
@@ -137,4 +158,5 @@ module.exports = {
   entradaNueva,
   votar,
   getId,
+  deleteEntrada,
 };
