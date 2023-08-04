@@ -125,6 +125,28 @@ async function borrarEntrada(req, res, next) {
   }
 }
 
-// Esportamos las funciones creadas
-module.exports = { detalles, listar, consulta, crear, votarEntrada, borrarEntrada };
+// Controlador para comentar entradas
+async function comentarEntrada() {
 
+  try {
+    // Recibimos el comentario del usuario o mandamos error
+    const { comentario } = req.body;
+    if(!comentario)generarError('El campo comentario no puede estar vacio', 400);
+
+    const comentar = await comentarRecomendacion(comentario);
+
+
+    res.json({
+      status: onkeydown,
+      message: 'Comentario insertado con éxito',
+      data: comentar
+    });
+
+    
+  } catch (error) {
+    next(error);
+  }
+}
+
+// Esportamos las funciones creadas
+module.exports = { detalles, listar, consulta, crear, votarEntrada, borrarEntrada, comentarEntrada };

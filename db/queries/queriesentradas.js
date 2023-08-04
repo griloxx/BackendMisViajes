@@ -151,6 +151,18 @@ async function deleteEntrada(id) {
 }
 
 
+async function comentarRecomendacion(comentario) {
+
+  let connection;
+  try {
+
+    connection = await getPool();
+
+  } finally {
+    if(connection) connection.release();
+  }
+}
+
 // Exportamos las funciones
 module.exports = {
   getAll,

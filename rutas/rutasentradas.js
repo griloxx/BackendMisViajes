@@ -19,5 +19,8 @@ router.post("/votar", autenticacion, usuarioExiste, controlador.votarEntrada);
 //Ruta para que usuario pueda borrar su recomendación
 router.delete("/borrar", autenticacion, usuarioExiste, controlador.borrarEntrada)
 
+//Ruta para comentar las entradas
+router.post("/comentar", autenticacion, usuarioExiste, controlador.comentarEntrada);
+
 //Exportamos módulo
 module.exports = router;

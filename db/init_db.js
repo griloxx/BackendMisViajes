@@ -34,14 +34,14 @@ async function initDb () {
         
         console.log('Creando tablas...');
         await connection.query(`CREATE TABLE IF NOT EXISTS usuarios(
-            id INT UNSIGNED AUTO_INCREMENT,
-            name VARCHAR(50) NOT NULL,
-            email VARCHAR(80) UNIQUE NOT NULL,
-            password VARCHAR(100) NOT NULL,
-            codigoRegistro VARCHAR(50),
-            create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-            avatar VARCHAR(50),
-            PRIMARY KEY (id)
+                id INT UNSIGNED AUTO_INCREMENT,
+                name VARCHAR(50) NOT NULL,
+                email VARCHAR(80) UNIQUE NOT NULL,
+                password VARCHAR(100) NOT NULL,
+                codigoRegistro VARCHAR(50),
+                create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+                avatar VARCHAR(50),
+                PRIMARY KEY (id)
             )`);
             
             await connection.query(`CREATE TABLE IF NOT EXISTS entradas(
@@ -57,9 +57,9 @@ async function initDb () {
                 foto4 VARCHAR(50),
                 foto5 VARCHAR(50),
                 votos INT UNSIGNED,
-            user_id INT UNSIGNED NOT NULL,
-            PRIMARY KEY (id),
-            FOREIGN KEY (user_id) REFERENCES usuarios(id)
+                user_id INT UNSIGNED NOT NULL,
+                PRIMARY KEY (id),
+                FOREIGN KEY (user_id) REFERENCES usuarios(id)
             )`)
             
             await connection.query(`CREATE TABLE IF NOT EXISTS comentarios(
@@ -72,7 +72,7 @@ async function initDb () {
                 PRIMARY KEY (id),
                 FOREIGN KEY (entrada_id) REFERENCES entradas(id),
                 FOREIGN KEY (user_id) REFERENCES usuarios(id)
-                )`)
+            )`)
                 
                 console.log('Tablas creadas.');
                 
