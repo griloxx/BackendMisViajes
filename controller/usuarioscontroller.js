@@ -124,8 +124,8 @@ async function modificarPerfil(req, res, next) {
   const { name, password } = req.body;
   let nombreAvatar;
   let passwordHash;
-  
-  if(password !== undefined) {
+
+  if(password !== undefined && password.length !== 0) {
     passwordHash = await bcrypt.hash(password, 10);
   }
   
