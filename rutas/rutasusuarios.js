@@ -13,6 +13,6 @@ router.get('/validacion/:codigoRegistro', controlador.validarCodigo)
 router.post("/login", controlador.login);
 
 // Modificar perfil
-router.post('/perfil', autenticacion, usuarioExiste, controlador.modificarPerfil)
+router.put('/perfil', autenticacion, usuarioExiste, controlador.modificarPerfil)
 
 module.exports = router 

@@ -15,7 +15,7 @@ router.get("/consulta/:id", controlador.detalles);
 //Ruta para crear la recomendación
 router.post("/crearentrada", autenticacion, usuarioExiste, controlador.crear);
 //Ruta para los votos
-router.post("/votar", autenticacion, usuarioExiste, controlador.votarEntrada);
+router.put("/votar", autenticacion, usuarioExiste, controlador.votarEntrada);
 //Ruta para que usuario pueda borrar su recomendación
 router.delete("/borrar", autenticacion, usuarioExiste, controlador.borrarEntrada)
 
