@@ -53,7 +53,7 @@ Login, registro, validar registro y modificar perfil:
   - POST /usuarios/registro : Para crear un nuevo usuario.
   - GET /usuarios/validación/:codigoRegistro : Para validar el registro.
   - POST /usuarios/login : Para realizar el login (loguearse).
-  - POST /usuarios/perfil : Para modificar el perfil del usuario registrado.
+  - PUT /usuarios/perfil : Para modificar el perfil del usuario registrado.
 
 Entradas de viajes:
 
