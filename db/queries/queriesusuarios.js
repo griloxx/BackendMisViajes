@@ -95,7 +95,6 @@ async function editarPerfil(id, name, password = null, avatar = null) {
   let connection;
   try {
     connection = await getPool();
-    console.log(password)
 
     if (password === null) {
       [passwordBd] = await connection.query(
