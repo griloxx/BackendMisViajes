@@ -61,5 +61,5 @@ Entradas de viajes:
 
   - POST /entradas/crearentrada : Para crear nuevas entradas de recomendaciones.
   - POST /entradas/comentar : Para realizar comentarios sobre las entradas de las recomendaciones.
-  - POST /entradas/votar : Para realizar las votaciones sobre las recomendaciones de viaje.
+  - PUT /entradas/votar : Para realizar las votaciones sobre las recomendaciones de viaje.
   - DEL /entradas/borrar : Para borrar las entradas de alguna recomendación de viaje, sólo puede borrarla un usuario registrado.
