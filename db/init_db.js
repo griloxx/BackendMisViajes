@@ -28,7 +28,7 @@ async function initDb () {
         
         connection = await getPool();
 
-        await connection.query('CREATE DATABASE IF NOT EXISTS viajes_dbs')
+        await connection.query('CREATE DATABASE IF NOT EXISTS viajes_db')
         
         await connection.query('USE viajes_db')
         

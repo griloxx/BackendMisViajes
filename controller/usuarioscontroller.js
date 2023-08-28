@@ -82,7 +82,7 @@ async function login(req, res, next) {
     const usuario = await getUsuarioBy({ email });
 
     // Si no existe mensaje común para no dar detalles excesivos por seguridad
-    if (usuario < 1) generarError("Usuario o contraseña errónea.", 401);
+    if (usuario === undefined) generarError("Usuario o contraseña errónea.", 401);
 
     // Comparamos contraseñas
     const autorizado = await bcrypt.compare(password, usuario.password);
