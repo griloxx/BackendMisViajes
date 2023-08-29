@@ -1,8 +1,15 @@
 const generarError = require("../../helpers/generarError");
 const getPool = require("../pool");
 
-async function crearUsuario({ name, email, passwordHash, codigoRegistro, avatar = null }) {
+async function crearUsuario({
+  name,
+  email,
+  passwordHash,
+  codigoRegistro,
+  nombreAvatar = null,
+}) {
   let connection;
+
   try {
     connection = await getPool();
     const [usuarios] = await connection.query(
@@ -13,8 +20,8 @@ async function crearUsuario({ name, email, passwordHash, codigoRegistro, avatar 
       generarError("el usuario ya existe", 500);
     }
     const [usuario] = await connection.query(
-      "INSERT INTO usuarios (name, email, password, codigoRegistro, avatar) VALUES(?,?,?,?,?)",
-      [name, email, passwordHash, codigoRegistro, avatar]
+      "INSERT INTO usuarios (name, email, password, codigoRegistro, nombreAvatar) VALUES(?,?,?,?,?)",
+      [name, email, passwordHash, codigoRegistro, nombreAvatar]
     );
     return usuario.insertId;
   } finally {
@@ -27,7 +34,6 @@ async function crearUsuario({ name, email, passwordHash, codigoRegistro, avatar 
 async function actualizarCodigo(codigoRegistro) {
   let connection;
   try {
-
     connection = await getPool();
 
     // Buscamos a un usuario con ese codigo
@@ -35,23 +41,22 @@ async function actualizarCodigo(codigoRegistro) {
       "SELECT id FROM usuarios WHERE codigoRegistro = ?",
       [codigoRegistro]
     );
-    if(users.length < 1) generarError('No existe ningún usuario con este código.', 400);
+    if (users.length < 1)
+      generarError("No existe ningún usuario con este código.", 400);
 
-    const [user] = users
+    const [user] = users;
 
     // Actualizamos el usuario
     await connection.query(
       "UPDATE usuarios SET codigoRegistro = null WHERE id = ?",
       [user.id]
-    )
-
+    );
   } finally {
-    if(connection) connection.release()
+    if (connection) connection.release();
   }
 }
 
 async function comprobarActivo(id) {
-
   let connection;
   try {
     connection = await getPool();
@@ -59,24 +64,20 @@ async function comprobarActivo(id) {
     const verificar = await connection.query(
       "SELECT codigoRegistro FROM usuarios WHERE id = ?",
       [id]
-    )
+    );
 
-      return verificar;
-
+    return verificar;
   } finally {
-    if(connection) connection.release();
-    
+    if (connection) connection.release();
   }
 }
 
 async function getUsuarioBy(objecto) {
-
   const [llave] = Object.keys(objecto);
   const valor = objecto[llave];
 
   let connection;
   try {
-
     connection = await getPool();
     const [usuario] = await connection.query(
       "SELECT * FROM usuarios WHERE ?? = ?",
@@ -84,15 +85,14 @@ async function getUsuarioBy(objecto) {
     );
 
     return usuario[0];
-
   } finally {
-    if(connection) connection.release()
+    if (connection) connection.release();
   }
 }
 
 async function editarPerfil(id, name, password = null, avatar = null) {
-
   let connection;
+
   try {
     connection = await getPool();
 
@@ -104,17 +104,19 @@ async function editarPerfil(id, name, password = null, avatar = null) {
       password = passwordBd[0].password;
     }
 
-  
     await connection.query(
       "UPDATE usuarios SET name = ?, password = ?, avatar = ? WHERE id = ?",
       [name, password, avatar, id]
     );
-
   } finally {
-    if(connection) connection.release();
+    if (connection) connection.release();
   }
-
-
 }
 
-module.exports = { crearUsuario, actualizarCodigo, getUsuarioBy, comprobarActivo, editarPerfil };
+module.exports = {
+  crearUsuario,
+  actualizarCodigo,
+  getUsuarioBy,
+  comprobarActivo,
+  editarPerfil,
+};

@@ -11,7 +11,7 @@ const {
   actualizarCodigo,
   getUsuarioBy,
   comprobarActivo,
-  editarPerfil
+  editarPerfil,
 } = require("../db/queries/queriesusuarios.js");
 const { validacionUsuario } = require("../helpers/validacionemail.js");
 
@@ -23,7 +23,12 @@ const guardarAvatar = require("../servicios/avatar.js");
 async function registro(req, res, next) {
   try {
     await esquemaRegistro.validateAsync(req.body);
-    const { name, email, password, avatar } = req.body;
+    const { name, email, password } = req.body;
+    let nombreAvatar;
+    if (req.files?.avatar) {
+      const { avatar } = req.files;
+      nombreAvatar = await guardarAvatar(avatar);
+    }
 
     //Generar codigo de registro
     const codigoRegistro = crypto.randomUUID();
@@ -37,7 +42,7 @@ async function registro(req, res, next) {
       email,
       passwordHash,
       codigoRegistro,
-      avatar,
+      nombreAvatar,
     });
 
     //Creamos asunto y cuerpo de email de verificacion
@@ -82,7 +87,7 @@ async function login(req, res, next) {
     const usuario = await getUsuarioBy({ email });
 
     // Si no existe mensaje común para no dar detalles excesivos por seguridad
-    if (usuario < 1) generarError("Usuario o contraseña errónea.", 401);
+    if (!usuario) generarError("Usuario o contraseña errónea.", 401);
 
     // Comparamos contraseñas
     const autorizado = await bcrypt.compare(password, usuario.password);
@@ -93,7 +98,7 @@ async function login(req, res, next) {
     const usuarioActivado = await comprobarActivo(usuario.id);
 
     // Si hay codigo de registro lanzamos error
-    if(usuarioActivado > 0) generarError('Usuario no activado', 401);
+    if (usuarioActivado > 0) generarError("Usuario no activado", 401);
 
     // Creamos objeto con los datos que queremos del usuario en el token
     const tokenInfo = {
@@ -118,31 +123,29 @@ async function login(req, res, next) {
 }
 
 async function modificarPerfil(req, res, next) {
+  try {
+    const { id } = req.user;
+    const { name, password } = req.body;
+    let nombreAvatar;
+    let passwordHash;
 
- try {
-  const { id } = req.user;
-  const { name, password } = req.body;
-  let nombreAvatar;
-  let passwordHash;
+    if (password !== undefined && password.length !== 0) {
+      passwordHash = await bcrypt.hash(password, 10);
+    }
 
-  if(password !== undefined && password.length !== 0) {
-    passwordHash = await bcrypt.hash(password, 10);
+    if (req.files !== null) {
+      const { avatar } = req.files;
+      nombreAvatar = await guardarAvatar(avatar);
+    }
+
+    await editarPerfil(id, name, passwordHash, nombreAvatar);
+
+    res.json({
+      status: "ok",
+      message: "Datos actualizados correctamente",
+    });
+  } catch (error) {
+    next(error);
   }
-
-  if(req.files !== null) {
-    const { avatar } = req.files;
-    nombreAvatar = await guardarAvatar(avatar);
-  }
-
-  await editarPerfil(id, name, passwordHash, nombreAvatar);
-
-  res.json({
-    status: "ok",
-    message: "Datos actualizados correctamente"
-  })
-
- } catch (error) {
-  next(error)
- }
 }
 module.exports = { registro, validarCodigo, login, modificarPerfil };
