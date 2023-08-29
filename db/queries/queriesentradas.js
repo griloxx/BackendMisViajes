@@ -154,12 +154,12 @@ async function comentarRecomendacion(comentario, entrada_id, user_id, imagen) {
 
   let connection;
   try {
-    const [foto] = imagen;
+    
     connection = await getPool();
 
     const insertar = await connection.query(
       "INSERT INTO comentarios (comentario, entrada_id, user_id, foto) VALUES(?,?,?,?)",
-      [comentario, entrada_id, user_id, foto]
+      [comentario, entrada_id, user_id, imagen]
     )
 
       return insertar.insertId;

@@ -99,8 +99,7 @@ async function crear(req, res, next) {
 
 async function votarEntrada(req, res, next) {
   try {
-    const { id } = req.body;
-
+    const { id } = req.params;
     const votos = await votar(id);
 
     res.json({
@@ -117,7 +116,7 @@ async function votarEntrada(req, res, next) {
 
 async function borrarEntrada(req, res, next) {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     
     const borrar = await deleteEntrada(id);
 
@@ -136,13 +135,18 @@ async function comentarEntrada(req, res, next) {
 
   try {
     // Recibimos el comentario del usuario o mandamos error
-    const { comentario, entrada_id} = req.body;
-    const { foto } = req.files;
+    const { comentario} = req.body;
     const { id } = req.user;
-    
+    const { entrada_id } = req.params;
+    let nombreFoto;
+
+    if(req.files?.foto) {
+      const { foto } = req.files;
+      nombreFoto = await guardarFoto([foto]);
+    }
     if(!comentario)generarError('El campo comentario no puede estar vacio', 400);
     //Guardamos la foto en la carpeta de fotos
-    const nombreFoto = await guardarFoto([foto]);
+    
     
     const comentar = await comentarRecomendacion(comentario, entrada_id, id, nombreFoto);
 

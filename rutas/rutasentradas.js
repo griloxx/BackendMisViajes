@@ -15,12 +15,12 @@ router.get("/consulta/:id", controlador.detalles);
 //Ruta para crear la recomendación
 router.post("/crearentrada", autenticacion, usuarioExiste, controlador.crear);
 //Ruta para los votos
-router.put("/votar", autenticacion, usuarioExiste, controlador.votarEntrada);
+router.put("/votar/:id", autenticacion, usuarioExiste, controlador.votarEntrada);
 //Ruta para que usuario pueda borrar su recomendación
-router.delete("/borrar", autenticacion, usuarioExiste, controlador.borrarEntrada)
+router.delete("/borrar/:id", autenticacion, usuarioExiste, controlador.borrarEntrada)
 
 //Ruta para comentar las entradas
-router.post("/comentar", autenticacion, usuarioExiste, controlador.comentarEntrada);
+router.post("/comentar/:entrada_id", autenticacion, usuarioExiste, controlador.comentarEntrada);
 
 //Exportamos módulo
 module.exports = router;

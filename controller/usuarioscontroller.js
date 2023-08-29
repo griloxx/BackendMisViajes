@@ -131,7 +131,7 @@ async function login(req, res, next) {
 async function modificarPerfil(req, res, next) {
   try {
     await esquemaEditarPerfil.validateAsync(req.body);
-    const { id } = req.user;
+    const { id } = req.params;
     const { name, password } = req.body;
     let nombreAvatar;
     let passwordHash;
