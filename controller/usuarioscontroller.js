@@ -32,10 +32,10 @@ async function registro(req, res, next) {
     let nombreAvatar;
     let avatar;
     if (req.files?.avatar) {
-      ( { avatar } = req.files );
+      ({ avatar } = req.files);
       nombreAvatar = await guardarAvatar(avatar);
     }
-    
+
     //Generar codigo de registro
     const codigoRegistro = crypto.randomUUID();
 
