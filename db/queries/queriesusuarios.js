@@ -92,7 +92,7 @@ async function getUsuarioBy(objecto) {
 
 async function editarPerfil(id, name, password = null, avatar = null) {
   let connection;
-
+  let passwordBd;
   try {
     connection = await getPool();
 
