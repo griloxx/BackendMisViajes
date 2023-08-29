@@ -1,10 +1,14 @@
 const crypto = require("node:crypto");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const fs = require("fs/promises");
+const { RUTA_AVATAR } = process.env;
+const path = require("path");
 
 const {
   esquemaRegistro,
   esquemaLogin,
+  esquemaEditarPerfil,
 } = require("../schemas/esquemasusuarios.js");
 const {
   crearUsuario,
@@ -12,6 +16,7 @@ const {
   getUsuarioBy,
   comprobarActivo,
   editarPerfil,
+  editarAvatar,
 } = require("../db/queries/queriesusuarios.js");
 const { validacionUsuario } = require("../helpers/validacionemail.js");
 
@@ -125,6 +130,7 @@ async function login(req, res, next) {
 
 async function modificarPerfil(req, res, next) {
   try {
+    await esquemaEditarPerfil.validateAsync(req.body);
     const { id } = req.user;
     const { name, password } = req.body;
     let nombreAvatar;
@@ -133,11 +139,19 @@ async function modificarPerfil(req, res, next) {
     if (password !== undefined && password.length !== 0) {
       passwordHash = await bcrypt.hash(password, 10);
     }
+    
+    let rutaAvatar;
+    const oldAvatar = await editarAvatar(id);
+    if (oldAvatar) {
+      rutaAvatar = path.resolve(__dirname, "../", RUTA_AVATAR, oldAvatar);
+    }
 
     if (req.files?.avatar) {
+      oldAvatar && await fs.unlink(rutaAvatar);
       const { avatar } = req.files;
       nombreAvatar = await guardarAvatar(avatar);
     }
+    
 
     await editarPerfil(id, name, passwordHash, nombreAvatar);
 
