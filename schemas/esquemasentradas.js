@@ -5,7 +5,6 @@ const esquemasEntradas = joi.object({
   categoria: joi.string().min(2).max(50).required(),
   lugar: joi.string().min(2).max(100).required(),
   texto: joi.string().min(25).max(65000).required(),
-  user_id: joi.number().required(),
 });
 
 module.exports = esquemasEntradas;

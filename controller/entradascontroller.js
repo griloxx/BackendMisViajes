@@ -63,13 +63,17 @@ async function crear(req, res, next) {
   try {
     await esquemasEntradas.validateAsync(req.body);
     const { titulo, categoria, lugar, texto } = req.body;
-    const { foto, foto2, foto3, foto4, foto5 } = req.files;
+    let foto, foto2, foto3, foto4, foto5;
+    if(req.files?.foto) {
+      ({ foto, foto2, foto3, foto4, foto5 } = req.files)
+    }
     const { id } = req.user
     if (!foto) {
       generarError("Al menos una foto es obligatoria", 400);
     }
     //Guardar fotos en la carpeta fotos
-
+    
+    
     const savePhoto = await guardarFoto([foto, foto2, foto3, foto4, foto5]);
 
     //Guardar entrada en la BD

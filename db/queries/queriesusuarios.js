@@ -20,7 +20,7 @@ async function crearUsuario({
       generarError("el usuario ya existe", 500);
     }
     const [usuario] = await connection.query(
-      "INSERT INTO usuarios (name, email, password, codigoRegistro, nombreAvatar) VALUES(?,?,?,?,?)",
+      "INSERT INTO usuarios (name, email, password, codigoRegistro, avatar) VALUES(?,?,?,?,?)",
       [name, email, passwordHash, codigoRegistro, nombreAvatar]
     );
     return usuario.insertId;
