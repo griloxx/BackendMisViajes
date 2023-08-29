@@ -27,10 +27,10 @@ async function registro(req, res, next) {
     let nombreAvatar;
     let avatar;
     if (req.files?.avatar) {
-      ( { avatar } = req.files );
+      ({ avatar } = req.files);
       nombreAvatar = await guardarAvatar(avatar);
     }
-    
+
     //Generar codigo de registro
     const codigoRegistro = crypto.randomUUID();
 
@@ -133,7 +133,9 @@ async function modificarPerfil(req, res, next) {
     if (password !== undefined && password.length !== 0) {
       passwordHash = await bcrypt.hash(password, 10);
     }
-
+    if (nombreAvatar) {
+      return req.files.remove.avatar;
+    }
     if (req.files?.avatar) {
       const { avatar } = req.files;
       nombreAvatar = await guardarAvatar(avatar);
