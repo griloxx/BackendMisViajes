@@ -87,19 +87,18 @@ async function entradaNueva(
     connection = await getPool();
 
     const [insertarEntrada] = await connection.query(
-      "INSERT INTO entradas (titulo, categoria, lugar, texto, user_id, foto) VALUES(?,?,?,?,?,?)",
-      [titulo, categoria, lugar, texto, user_id, savePhoto[0]]
+      "INSERT INTO entradas (titulo, categoria, lugar, texto, user_id) VALUES(?,?,?,?,?)",
+      [titulo, categoria, lugar, texto, user_id]
     );
 
-    for (i = 1; i <= savePhoto.length; i++) {
-      if (i !== 1) {
+    savePhoto.forEach(async foto => {
         await connection.query(
-          "UPDATE entradas SET foto" + i + " = ? WHERE id = ?",
-          [savePhoto[--i], insertarEntrada.insertId]
-        );
-        i++;
-      }
-    }
+        "INSERT INTO fotosEntradas (entrada_id, foto) VALUES(?,?)",
+        [insertarEntrada.insertId, foto]
+      );
+    });
+
+    
     return insertarEntrada.insertId;
   } finally {
     if (connection) connection.release();

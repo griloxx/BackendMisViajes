@@ -63,9 +63,9 @@ async function crear(req, res, next) {
   try {
     await esquemasEntradas.validateAsync(req.body);
     const { titulo, categoria, lugar, texto } = req.body;
-    let foto, foto2, foto3, foto4, foto5;
+    let foto;
     if(req.files?.foto) {
-      ({ foto, foto2, foto3, foto4, foto5 } = req.files)
+      ({ foto } = req.files)
     }
     const { id } = req.user
     if (!foto) {
@@ -74,7 +74,7 @@ async function crear(req, res, next) {
     //Guardar fotos en la carpeta fotos
     
     
-    const savePhoto = await guardarFoto([foto, foto2, foto3, foto4, foto5]);
+    const savePhoto = await guardarFoto(foto);
 
     //Guardar entrada en la BD
 

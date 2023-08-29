@@ -4,7 +4,7 @@ require("dotenv").config()
 
 const {DB_HOST, DB_USER, DB_PASSWORD} = process.env
 
-let pool
+let pool;
 
 const getPool = async ()=>{
     if(!pool) {
@@ -51,11 +51,6 @@ async function initDb () {
                 lugar VARCHAR(100) NOT NULL,
                 entradilla DATETIME DEFAULT CURRENT_TIMESTAMP,
                 texto TEXT NOT NULL,
-                foto VARCHAR(50) NOT NULL,
-                foto2 VARCHAR(50),
-                foto3 VARCHAR(50),
-                foto4 VARCHAR(50),
-                foto5 VARCHAR(50),
                 votos INT UNSIGNED,
                 user_id INT UNSIGNED NOT NULL,
                 PRIMARY KEY (id),
@@ -72,6 +67,14 @@ async function initDb () {
                 PRIMARY KEY (id),
                 FOREIGN KEY (entrada_id) REFERENCES entradas(id),
                 FOREIGN KEY (user_id) REFERENCES usuarios(id)
+            )`)
+
+            await connection.query(`CREATE TABLE IF NOT EXISTS fotosEntradas(
+                id INT UNSIGNED AUTO_INCREMENT,
+                entrada_id INT UNSIGNED NOT NULL,
+                foto VARCHAR(50) NOT NULL,
+                PRIMARY KEY (id),
+                FOREIGN KEY (entrada_id) REFERENCES entradas(id)
             )`)
                 
                 console.log('Tablas creadas.');
