@@ -51,10 +51,9 @@ async function initDb () {
                 lugar VARCHAR(100) NOT NULL,
                 entradilla DATETIME DEFAULT CURRENT_TIMESTAMP,
                 texto TEXT NOT NULL,
-                votos INT UNSIGNED,
                 user_id INT UNSIGNED NOT NULL,
                 PRIMARY KEY (id),
-                FOREIGN KEY (user_id) REFERENCES usuarios(id)
+                FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE
             )`)
             
             await connection.query(`CREATE TABLE IF NOT EXISTS comentarios(
@@ -65,8 +64,8 @@ async function initDb () {
                 foto VARCHAR(50),
                 create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id),
-                FOREIGN KEY (entrada_id) REFERENCES entradas(id),
-                FOREIGN KEY (user_id) REFERENCES usuarios(id)
+                FOREIGN KEY (entrada_id) REFERENCES entradas(id) ON DELETE CASCADE,
+                FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE
             )`)
 
             await connection.query(`CREATE TABLE IF NOT EXISTS fotosEntradas(
@@ -74,7 +73,16 @@ async function initDb () {
                 entrada_id INT UNSIGNED NOT NULL,
                 foto VARCHAR(50) NOT NULL,
                 PRIMARY KEY (id),
-                FOREIGN KEY (entrada_id) REFERENCES entradas(id)
+                FOREIGN KEY (entrada_id) REFERENCES entradas(id) ON DELETE CASCADE
+            )`)
+
+            await connection.query(`CREATE TABLE IF NOT EXISTS votos(
+                id INT UNSIGNED AUTO_INCREMENT,
+                entrada_id INT UNSIGNED NOT NULL,
+                user_id INT UNSIGNED NOT NULL,
+                PRIMARY KEY (id),
+                FOREIGN KEY (entrada_id) REFERENCES entradas(id) ON DELETE CASCADE,
+                FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE
             )`)
                 
                 console.log('Tablas creadas.');

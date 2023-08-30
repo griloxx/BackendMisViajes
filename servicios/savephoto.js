@@ -6,7 +6,7 @@ const { RUTA_FOTOS } = process.env;
 const generarError = require("../helpers/generarError");
 
 async function guardarFoto(fotos) {
-
+  
   try {
     const rutaFoto = path.resolve(__dirname, "../", RUTA_FOTOS);
 
@@ -30,7 +30,6 @@ async function guardarFoto(fotos) {
         nombreFotos.push(nombreFoto);
       }
     })
-    
     return nombreFotos;
   } catch (error) {
     generarError("No se ha podido guardar la foto ");

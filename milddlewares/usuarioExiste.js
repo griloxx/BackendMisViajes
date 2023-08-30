@@ -3,7 +3,6 @@ const {getUsuarioBy} = require('../db/queries/queriesusuarios');
 const generarError = require('../helpers/generarError');
 
 async function usuarioExiste(req, res, next) {
-
     // Cogemos id de req.user que le pasó el middleware de autenticacion
     const { id } = req.user;
 

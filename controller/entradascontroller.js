@@ -5,7 +5,13 @@ const {
   votar,
   getId,
   deleteEntrada,
-  comentarRecomendacion
+  comentarRecomendacion,
+  yaVotado,
+  quitarVotos,
+  getConsultaVotos,
+  getCommentsId,
+  getFotosId,
+  getVotosId
 } = require("../db/queries/queriesentradas");
 const generarError = require("../helpers/generarError");
 const esquemasEntradas = require("../schemas/esquemasentradas");
@@ -31,10 +37,18 @@ async function listar(req, res, next) {
 
 async function detalles(req, res, next) {
   const {id} = req.params
+  const userId = req.user.id
   let entradas;
   try {
     entradas = await getId(id);
     if (entradas < 1) generarError ("La entrada no existe", 400)
+    entradas.comments = await getCommentsId(id)
+    entradas.fotos = await getFotosId(id)
+    entradas.votos = await getVotosId(id)
+    if(userId) {
+      entradas.yaVotado = await yaVotado(id, userId)
+    }
+    
     res.json(entradas);
   } catch (error) {
     next(error);
@@ -50,8 +64,8 @@ async function consulta(req, res, next) {
       const { lugar, categoria } = req.body;
       consulta = await getConsulta(lugar, categoria);
     } else {
-      const { lugar, categoria, votos } = req.body;
-      consulta = await getConsulta(lugar, categoria, votos);
+      const { lugar, categoria } = req.body;
+      consulta = await getConsultaVotos(lugar, categoria);
     }
     res.json(consulta);
   } catch (error) {
@@ -66,6 +80,7 @@ async function crear(req, res, next) {
     let foto;
     if(req.files?.foto) {
       ({ foto } = req.files)
+      
     }
     const { id } = req.user
     if (!foto) {
@@ -73,9 +88,8 @@ async function crear(req, res, next) {
     }
     //Guardar fotos en la carpeta fotos
     
+    const savePhoto = await guardarFoto(Array.isArray(foto) ? foto : [foto]);
     
-    const savePhoto = await guardarFoto(foto);
-
     //Guardar entrada en la BD
 
     const insertarEntrada = await entradaNueva(
@@ -99,12 +113,17 @@ async function crear(req, res, next) {
 
 async function votarEntrada(req, res, next) {
   try {
-    const { id } = req.params;
-    const votos = await votar(id);
+    const entradaId = req.params.id;
+    const { id } = req.user;
+    let votos;
+    const votado = await yaVotado(entradaId, id)
+
+    votado ? votos = await quitarVotos(entradaId, id) : votos = await votar(entradaId, id);
+    
 
     res.json({
       status: "ok",
-      message: "voto sumado con éxito",
+      message: "Guardado",
       data: votos,
     });
   } catch (error) {
