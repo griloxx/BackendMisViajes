@@ -21,13 +21,20 @@ const guardarFoto = require("../servicios/savephoto");
 async function listar(req, res, next) {
   let entradas;
   try {
-    if (!req.body.votos) {
+    if (!req.query.votos) {
       entradas = await getAll();
     } else {
-      const { votos } = req.body;
+      const { votos } = req.query;
       entradas = await getAll(votos);
     }
-    
+
+    if (!entradas) {
+      res.json({
+        status: "ok",
+        message: "No se a encontado ninguna entrada",
+      });
+    }
+
     res.json(entradas);
   } catch (error) {
     next(error);

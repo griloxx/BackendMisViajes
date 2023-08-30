@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const fileUpload = require("express-fileupload");
-const cors = require("cors")
+const cors = require("cors");
 
 require("dotenv").config();
 const { port } = process.env;
@@ -12,7 +12,7 @@ const getUsuarios = require("./rutas/rutasusuarios");
 //Middleware para req.body
 app.use(express.json());
 // cors para poder llamarlo desde el frontend sin que ponga pegas
-app.use(cors())
+app.use(cors());
 //Middleware para fileupload
 app.use(fileUpload());
 //Rutas de entradas
