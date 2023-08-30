@@ -1,3 +1,4 @@
+const generarError = require("../../helpers/generarError");
 const getPool = require("../pool");
 
 // Coger todos las entradas ordenado por votos o fecha(Entradilla)
@@ -5,20 +6,17 @@ async function getAll(votos = "entradilla") {
   let connection;
   let entradas;
   try {
-    
     connection = await getPool();
-    if(votos == "votos") {
+    if (votos == "votos") {
       [entradas] = await connection.query(
         "SELECT e.*, COUNT(v.id) AS total_votos FROM entradas e LEFT JOIN votos v ON e.id = v.entrada_id GROUP BY e.id ORDER BY total_votos DESC LIMIT 3"
-        );
-      }else {
-        [entradas] = await connection.query(
-          "SELECT * FROM entradas ORDER BY ?? DESC LIMIT 3",
-          [votos]
-        );
-      }
-
-
+      );
+    } else {
+      [entradas] = await connection.query(
+        "SELECT * FROM entradas ORDER BY ?? DESC LIMIT 3",
+        [votos]
+      );
+    }
 
     return entradas;
   } finally {
@@ -92,10 +90,10 @@ async function getVotosId(id) {
       "SELECT COUNT(v.id) AS total_votos FROM votos v LEFT JOIN entradas e ON v.entrada_id = e.id WHERE v.entrada_id = ? GROUP BY v.id",
       [id]
     );
-    if(entradas.id) {
+    if (entradas.id) {
       return entradas[0].total_votos;
     }
-    return
+    return;
   } finally {
     if (connection) {
       connection.release();
@@ -139,7 +137,8 @@ async function getConsultaVotos(lugar, categoria) {
   try {
     connection = await getPool();
 
-    const [consulta1] = await connection.query(`
+    const [consulta1] = await connection.query(
+      `
       SELECT e.*, COUNT(v.id) AS total_votos
       FROM entradas e
       LEFT JOIN votos v ON e.id = v.entrada_id
@@ -151,7 +150,8 @@ async function getConsultaVotos(lugar, categoria) {
       [`%${lugar}%`, categoria]
     );
 
-    const [consulta2] = await connection.query(`
+    const [consulta2] = await connection.query(
+      `
       SELECT e.*, COUNT(v.id) AS total_votos
       FROM entradas e
       LEFT JOIN votos v ON e.id = v.entrada_id
@@ -196,14 +196,13 @@ async function entradaNueva(
       [titulo, categoria, lugar, texto, user_id]
     );
 
-    savePhoto.forEach(async foto => {
-        await connection.query(
+    savePhoto.forEach(async (foto) => {
+      await connection.query(
         "INSERT INTO fotosEntradas (entrada_id, foto) VALUES(?,?)",
         [insertarEntrada.insertId, foto]
       );
     });
 
-    
     return insertarEntrada.insertId;
   } finally {
     if (connection) connection.release();
@@ -220,8 +219,8 @@ async function yaVotado(entradaId, id) {
       "SELECT * FROM votos WHERE entrada_id = ? AND user_id = ?",
       [entradaId, id]
     );
-    
-    return votos[0]
+
+    return votos[0];
   } finally {
     if (connection) connection.release();
   }
@@ -258,18 +257,23 @@ async function quitarVotos(entradaId, id) {
 }
 
 // Borrar una entrada por un usuario registrado
-async function deleteEntrada(id) {
+async function deleteEntrada(id, creator_id) {
   let connection;
 
   try {
     connection = await getPool();
-
-    const [borrarEntrada] = await connection.query(
-      "DELETE FROM entradas WHERE id = ?",
+    const [consulaEntrada] = await connection.query(
+      "SELECT * FROM entradas WHERE id = ?",
       [id]
     );
-    
-    return borrarEntrada;
+    if (consulaEntrada[0].user_id === creator_id) {
+      const [borrarEntrada] = await connection.query(
+        "DELETE FROM entradas WHERE id = ?",
+        [id]
+      );
+      return borrarEntrada;
+    }
+    generarError("Usted no tiene derecho a borrar la entrada");
   } finally {
     if (connection) {
       connection.release();
@@ -277,22 +281,19 @@ async function deleteEntrada(id) {
   }
 }
 
-
 async function comentarRecomendacion(comentario, entrada_id, user_id, imagen) {
-
   let connection;
   try {
-    
     connection = await getPool();
 
     const insertar = await connection.query(
       "INSERT INTO comentarios (comentario, entrada_id, user_id, foto) VALUES(?,?,?,?)",
       [comentario, entrada_id, user_id, imagen]
-    )
+    );
 
-      return insertar.insertId;
+    return insertar.insertId;
   } finally {
-    if(connection) connection.release();
+    if (connection) connection.release();
   }
 }
 
@@ -310,5 +311,5 @@ module.exports = {
   getFotosId,
   getVotosId,
   deleteEntrada,
-  comentarRecomendacion
+  comentarRecomendacion,
 };
