@@ -11,7 +11,7 @@ const {
   getConsultaVotos,
   getCommentsId,
   getFotosId,
-  getVotosId
+  getVotosId,
 } = require("../db/queries/queriesentradas");
 const generarError = require("../helpers/generarError");
 const esquemasEntradas = require("../schemas/esquemasentradas");
@@ -27,6 +27,7 @@ async function listar(req, res, next) {
       const { votos } = req.body;
       entradas = await getAll(votos);
     }
+    
     res.json(entradas);
   } catch (error) {
     next(error);

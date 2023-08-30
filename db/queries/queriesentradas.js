@@ -20,7 +20,7 @@ async function getAll(votos = "entradilla") {
 
 
 
-    return entradas;
+    return entradas[0];
   } finally {
     if (connection) {
       connection.release();
@@ -65,6 +65,7 @@ async function getCommentsId(id) {
     }
   }
 }
+
 async function getFotosId(id) {
   let connection;
 
@@ -121,9 +122,9 @@ async function getConsulta(lugar, categoria) {
     );
 
     if (consulta1.length > 0) {
-      return consulta1;
+      return consulta1[0];
     } else if (consulta2.length > 0) {
-      return consulta2;
+      return consulta2[0];
     } else {
       return (consulta3 = "No se han encontrado coincidencias");
     }
@@ -164,9 +165,9 @@ async function getConsultaVotos(lugar, categoria) {
     );
 
     if (consulta1.length > 0) {
-      return consulta1;
+      return consulta1[0];
     } else if (consulta2.length > 0) {
-      return consulta2;
+      return consulta2[0];
     } else {
       return (consulta3 = "No se han encontrado coincidencias");
     }
