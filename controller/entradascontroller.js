@@ -37,25 +37,24 @@ async function listar(req, res, next) {
 // Función asíncrona para ver detalles de una entrada recomendada
 
 async function detalles(req, res, next) {
-  const {id} = req.params
-  const userId = req.user.id
+  const { id } = req.params;
+  const userId = req.user.id;
   let entradas;
   try {
     entradas = await getId(id);
-    if (entradas < 1) generarError ("La entrada no existe", 400)
-    entradas.comments = await getCommentsId(id)
-    entradas.fotos = await getFotosId(id)
-    entradas.votos = await getVotosId(id)
-    if(userId) {
-      entradas.yaVotado = await yaVotado(id, userId)
+    if (entradas < 1) generarError("La entrada no existe", 400);
+    entradas.comments = await getCommentsId(id);
+    entradas.fotos = await getFotosId(id);
+    entradas.votos = await getVotosId(id);
+    if (userId) {
+      entradas.yaVotado = await yaVotado(id, userId);
     }
-    
+
     res.json(entradas);
   } catch (error) {
     next(error);
   }
 }
-
 
 // Función asincrona para realizar consultas de lugar y/o categoria
 async function consulta(req, res, next) {
@@ -79,18 +78,17 @@ async function crear(req, res, next) {
     await esquemasEntradas.validateAsync(req.body);
     const { titulo, categoria, lugar, texto } = req.body;
     let foto;
-    if(req.files?.foto) {
-      ({ foto } = req.files)
-      
+    if (req.files?.foto) {
+      ({ foto } = req.files);
     }
-    const { id } = req.user
+    const { id } = req.user;
     if (!foto) {
       generarError("Al menos una foto es obligatoria", 400);
     }
     //Guardar fotos en la carpeta fotos
-    
+
     const savePhoto = await guardarFoto(Array.isArray(foto) ? foto : [foto]);
-    
+
     //Guardar entrada en la BD
 
     const insertarEntrada = await entradaNueva(
@@ -117,10 +115,11 @@ async function votarEntrada(req, res, next) {
     const entradaId = req.params.id;
     const { id } = req.user;
     let votos;
-    const votado = await yaVotado(entradaId, id)
+    const votado = await yaVotado(entradaId, id);
 
-    votado ? votos = await quitarVotos(entradaId, id) : votos = await votar(entradaId, id);
-    
+    votado
+      ? (votos = await quitarVotos(entradaId, id))
+      : (votos = await votar(entradaId, id));
 
     res.json({
       status: "ok",
@@ -137,10 +136,11 @@ async function votarEntrada(req, res, next) {
 async function borrarEntrada(req, res, next) {
   try {
     const { id } = req.params;
-    
-    const borrar = await deleteEntrada(id);
+    const user_id = req.user.id;
 
-    if (borrar.affectedRows < 1) generarError ("La entrada no existe.", 404)
+    const borrar = await deleteEntrada(id, user_id);
+
+    if (borrar.affectedRows < 1) generarError("La entrada no existe.", 404);
     res.json({
       status: "ok",
       message: "Recomendación borrada con éxito",
@@ -152,35 +152,45 @@ async function borrarEntrada(req, res, next) {
 
 // Controlador para comentar entradas
 async function comentarEntrada(req, res, next) {
-
   try {
     // Recibimos el comentario del usuario o mandamos error
-    const { comentario} = req.body;
+    const { comentario } = req.body;
     const { id } = req.user;
     const { entrada_id } = req.params;
     let nombreFoto;
 
-    if(req.files?.foto) {
+    if (req.files?.foto) {
       const { foto } = req.files;
       nombreFoto = await guardarFoto([foto]);
     }
-    if(!comentario)generarError('El campo comentario no puede estar vacio', 400);
+    if (!comentario)
+      generarError("El campo comentario no puede estar vacio", 400);
     //Guardamos la foto en la carpeta de fotos
-    
-    
-    const comentar = await comentarRecomendacion(comentario, entrada_id, id, nombreFoto);
+
+    const comentar = await comentarRecomendacion(
+      comentario,
+      entrada_id,
+      id,
+      nombreFoto
+    );
 
     res.json({
       status: "ok",
-      message: 'Comentario insertado con éxito',
-      data: comentar
+      message: "Comentario insertado con éxito",
+      data: comentar,
     });
-
-    
   } catch (error) {
     next(error);
   }
 }
 
 // Esportamos las funciones creadas
-module.exports = { detalles, listar, consulta, crear, votarEntrada, borrarEntrada, comentarEntrada };
+module.exports = {
+  detalles,
+  listar,
+  consulta,
+  crear,
+  votarEntrada,
+  borrarEntrada,
+  comentarEntrada,
+};
