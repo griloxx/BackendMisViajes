@@ -9,11 +9,11 @@ async function getAll(votos = "entradilla") {
     connection = await getPool();
     if (votos == "votos") {
       [entradas] = await connection.query(
-        "SELECT e.*, COUNT(v.id) AS total_votos FROM entradas e LEFT JOIN votos v ON e.id = v.entrada_id GROUP BY e.id ORDER BY total_votos DESC LIMIT 3"
+        "SELECT e.*, COUNT(v.id) AS total_votos, u.name, u.avatar FROM entradas e LEFT JOIN votos v ON e.id = v.entrada_id LEFT JOIN usuarios u ON e.user_id = u.id GROUP BY e.id ORDER BY total_votos DESC LIMIT 3"
       );
     } else {
       [entradas] = await connection.query(
-        "SELECT * FROM entradas ORDER BY ?? DESC LIMIT 3",
+        "SELECT e.*, u.name, u.avatar FROM entradas e LEFT JOIN usuarios u ON e.user_id = u.id GROUP BY e.id ORDER BY ?? DESC LIMIT 3",
         [votos]
       );
     }
@@ -35,7 +35,7 @@ async function getId(id) {
     connection = await getPool();
 
     const [entradas] = await connection.query(
-      "SELECT e.*, COUNT(v.id) AS total_votos FROM entradas e LEFT JOIN votos v ON e.id = v.entrada_id WHERE e.id = ? GROUP BY e.id",
+      "SELECT e.*, u.name, u.avatar, COUNT(v.id) AS total_votos FROM entradas e LEFT JOIN votos v ON e.id = v.entrada_id LEFT JOIN usuarios u ON e.user_id = u.id WHERE e.id = ? GROUP BY e.id",
       [id]
     );
 
@@ -53,7 +53,7 @@ async function getCommentsId(id) {
     connection = await getPool();
 
     const [entradas] = await connection.query(
-      "SELECT c.* FROM comentarios c LEFT JOIN entradas e ON c.entrada_id = e.id WHERE c.entrada_id = ? GROUP BY c.id",
+      "SELECT c.*, u.name, u.avatar FROM comentarios c LEFT JOIN entradas e ON c.entrada_id = e.id LEFT JOIN usuarios u ON c.user_id = u.id WHERE c.entrada_id = ? GROUP BY c.id",
       [id]
     );
     return entradas;
@@ -110,12 +110,12 @@ async function getConsulta(lugar, categoria) {
     connection = await getPool();
 
     const [consulta1] = await connection.query(
-      "SELECT * FROM entradas WHERE lugar like ? AND categoria = ? ORDER BY 'entradilla' DESC LIMIT 3",
+      "SELECT e.*, u.name, u.avatar FROM entradas e LEFT JOIN usuarios u ON e.user_id = u.id WHERE lugar like ? AND categoria = ? GROUP BY e.id ORDER BY 'entradilla' DESC LIMIT 3",
       [`%${lugar}%`, categoria]
     );
 
     const [consulta2] = await connection.query(
-      "SELECT * FROM entradas WHERE lugar like ? OR categoria = ? ORDER BY 'entradilla' DESC LIMIT 3",
+      "SELECT e.*, u.name, u.avatar FROM entradas e LEFT JOIN usuarios u ON e.user_id = u.id WHERE lugar like ? OR categoria = ? GROUP BY e.id ORDER BY 'entradilla' DESC LIMIT 3",
       [`%${lugar}%`, categoria]
     );
 
@@ -140,9 +140,10 @@ async function getConsultaVotos(lugar, categoria) {
 
     const [consulta1] = await connection.query(
       `
-      SELECT e.*, COUNT(v.id) AS total_votos
+      SELECT e.*, u.name, u.avatar, COUNT(v.id) AS total_votos
       FROM entradas e
       LEFT JOIN votos v ON e.id = v.entrada_id
+      LEFT JOIN usuarios u ON e.user_id = u.id
       WHERE e.lugar LIKE ? AND e.categoria = ?
       GROUP BY e.id
       ORDER BY total_votos DESC
@@ -153,9 +154,10 @@ async function getConsultaVotos(lugar, categoria) {
 
     const [consulta2] = await connection.query(
       `
-      SELECT e.*, COUNT(v.id) AS total_votos
+      SELECT e.*, u.name, u.avatar, COUNT(v.id) AS total_votos
       FROM entradas e
       LEFT JOIN votos v ON e.id = v.entrada_id
+      LEFT JOIN usuarios u ON e.user_id = u.id
       WHERE e.lugar LIKE ? OR e.categoria = ?
       GROUP BY e.id
       ORDER BY total_votos DESC
