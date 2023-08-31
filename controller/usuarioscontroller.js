@@ -109,6 +109,7 @@ async function login(req, res, next) {
     // Creamos objeto con los datos que queremos del usuario en el token
     const tokenInfo = {
       id: usuario.id,
+      name: usuario.name,
       avatar: usuario.avatar,
     };
 
@@ -153,11 +154,23 @@ async function modificarPerfil(req, res, next) {
     }
     
 
-    await editarPerfil(id, name, passwordHash, nombreAvatar);
+    const actualizarperfil = await editarPerfil(id, name, passwordHash, nombreAvatar);
+
+    const tokenInfo = {
+      id: actualizarperfil.id,
+      name: actualizarperfil.name,
+      avatar: actualizarperfil.avatar,
+    };
+
+    // Creamos el token firmado
+    const token = jwt.sign(tokenInfo, process.env.LLAVE_SECRETA, {
+      expiresIn: "1d",
+    });
 
     res.json({
       status: "ok",
       message: "Datos actualizados correctamente",
+      data: token
     });
   } catch (error) {
     next(error);

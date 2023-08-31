@@ -126,6 +126,9 @@ async function editarPerfil(id, name = null, password = null, avatar = null) {
       "UPDATE usuarios SET name = ?, password = ?, avatar = ? WHERE id = ?",
       [name, password, avatar, id]
     );
+    
+
+    return {id, name, avatar}
   } finally {
     if (connection) connection.release();
   }
