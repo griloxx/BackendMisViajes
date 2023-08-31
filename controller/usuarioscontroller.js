@@ -16,6 +16,7 @@ const {
   getUsuarioBy,
   comprobarActivo,
   editarPerfil,
+  avatarEliminado,
 } = require("../db/queries/queriesusuarios.js");
 const { validacionUsuario } = require("../helpers/validacionemail.js");
 
@@ -131,7 +132,7 @@ async function login(req, res, next) {
 async function modificarPerfil(req, res, next) {
   try {
     await esquemaEditarPerfil.validateAsync(req.body);
-    
+
     const { id } = req.user;
     const { name, password } = req.body;
     let nombreAvatar;
@@ -140,21 +141,25 @@ async function modificarPerfil(req, res, next) {
     if (password !== undefined && password.length !== 0) {
       passwordHash = await bcrypt.hash(password, 10);
     }
-    
+
     let rutaAvatar;
-    const oldAvatar = req.user.avatar
+    const oldAvatar = req.user.avatar;
     if (oldAvatar) {
       rutaAvatar = path.resolve(__dirname, "../", RUTA_AVATAR, oldAvatar);
     }
 
     if (req.files?.avatar) {
-      oldAvatar && await fs.unlink(rutaAvatar);
+      oldAvatar && (await fs.unlink(rutaAvatar));
       const { avatar } = req.files;
       nombreAvatar = await guardarAvatar(avatar);
     }
-    
 
-    const actualizarperfil = await editarPerfil(id, name, passwordHash, nombreAvatar);
+    const actualizarperfil = await editarPerfil(
+      id,
+      name,
+      passwordHash,
+      nombreAvatar
+    );
 
     const tokenInfo = {
       id: actualizarperfil.id,
@@ -170,10 +175,34 @@ async function modificarPerfil(req, res, next) {
     res.json({
       status: "ok",
       message: "Datos actualizados correctamente",
-      data: token
+      data: token,
     });
   } catch (error) {
     next(error);
   }
 }
-module.exports = { registro, validarCodigo, login, modificarPerfil };
+
+async function deleteAvatar(req, res, next) {
+  try {
+    const { id, avatar } = req.user;
+
+    const rutaAvatar = path.resolve(__dirname, "../", RUTA_AVATAR, avatar);
+
+    await fs.unlink(rutaAvatar);
+    await avatarEliminado(id, avatar);
+    res.json({
+      status: "ok",
+      message: "foto borrada con éxito",
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = {
+  registro,
+  validarCodigo,
+  login,
+  modificarPerfil,
+  deleteAvatar,
+};

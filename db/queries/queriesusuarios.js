@@ -1,3 +1,4 @@
+const { func } = require("joi");
 const generarError = require("../../helpers/generarError");
 const getPool = require("../pool");
 
@@ -126,9 +127,22 @@ async function editarPerfil(id, name = null, password = null, avatar = null) {
       "UPDATE usuarios SET name = ?, password = ?, avatar = ? WHERE id = ?",
       [name, password, avatar, id]
     );
-    
 
-    return {id, name, avatar}
+    return { id, name, avatar };
+  } finally {
+    if (connection) connection.release();
+  }
+}
+
+async function avatarEliminado(id, avatar) {
+  let connection;
+  try {
+    connection = await getPool();
+    const [sinAvatar] = await connection.query(
+      "UPDATE usuarios SET avatar = null WHERE id = ? ",
+      [id]
+    );
+    return sinAvatar;
   } finally {
     if (connection) connection.release();
   }
@@ -140,4 +154,5 @@ module.exports = {
   getUsuarioBy,
   comprobarActivo,
   editarPerfil,
+  avatarEliminado,
 };
