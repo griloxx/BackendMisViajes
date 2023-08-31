@@ -41,7 +41,7 @@ async function listar(req, res, next) {
 
 async function detalles(req, res, next) {
   const { id } = req.params;
-  const userId = req.user.id;
+
   let entradas;
   try {
     entradas = await getId(id);
@@ -49,7 +49,8 @@ async function detalles(req, res, next) {
     entradas.comments = await getCommentsId(id);
     entradas.fotos = await getFotosId(id);
     entradas.votos = await getVotosId(id);
-    if (userId) {
+    if (req.user?.id) {
+      const userId = req.user.id;
       entradas.yaVotado = await yaVotado(id, userId);
     }
 
