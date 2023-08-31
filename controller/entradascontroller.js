@@ -16,14 +16,14 @@ const {
 const generarError = require("../helpers/generarError");
 const esquemasEntradas = require("../schemas/esquemasentradas");
 const guardarFoto = require("../servicios/savephoto");
-const fs = require("fs/promises")
+const fs = require("fs/promises");
 
 // Función asincrona para listar de todas las entradas
 async function listar(req, res, next) {
   let entradas;
   try {
-      const { votos } = req.query;
-      entradas = await getAll(votos);
+    const { votos } = req.query;
+    entradas = await getAll(votos);
     if (!entradas) {
       res.json({
         status: "ok",
@@ -63,8 +63,8 @@ async function detalles(req, res, next) {
 async function consulta(req, res, next) {
   let consulta;
   try {
-      const { lugar, categoria, votos } = req.body;
-      consulta = await getConsulta(lugar, categoria, votos);
+    const { lugar, categoria, votos } = req.query;
+    consulta = await getConsulta(lugar, categoria, votos);
 
     res.json(consulta);
   } catch (error) {
@@ -137,15 +137,16 @@ async function borrarEntrada(req, res, next) {
     const { id } = req.params;
     const user_id = req.user.id;
 
-    const rutaFotos = path.join(__dirname, "../fotos/")
+    const rutaFotos = path.join(__dirname, "../fotos/");
 
     const borrar = await deleteEntrada(id, user_id);
 
-    borrar.consultarFotos.forEach(async foto => {
-      await fs.unlink(rutaFotos + foto.foto)
+    borrar.consultarFotos.forEach(async (foto) => {
+      await fs.unlink(rutaFotos + foto.foto);
     });
-    
-    if (borrar.borrarEntrada.affectedRows < 1) generarError("La entrada no existe.", 404);
+
+    if (borrar.borrarEntrada.affectedRows < 1)
+      generarError("La entrada no existe.", 404);
     res.json({
       status: "ok",
       message: "Recomendación borrada con éxito",
