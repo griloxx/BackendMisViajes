@@ -19,10 +19,6 @@ const getPool = async ()=>{
     return await pool.getConnection()
 }
 
-// Definición de categorías válidas para Joi
-const categoriaValida = Joi.string().valid('Aventura', 'Single', 'Parejas', 'Familia', 'Cultura', 'Gastronomía', 'Playa', 'Montaña', 'Naturaleza');
-
-
 async function initDb () {
     
     
@@ -51,7 +47,7 @@ async function initDb () {
             await connection.query(`CREATE TABLE IF NOT EXISTS entradas(
                 id INT UNSIGNED AUTO_INCREMENT,
                 titulo VARCHAR(50) UNIQUE NOT NULL,
-                categoria VARCHAR(50) NOT NULL,
+                categoria ENUM('Aventura', 'Single', 'Parejas', 'Familia', 'Cultura', 'Gastronomía', 'Playa', 'Montaña', 'Naturaleza') NOT NULL,
                 lugar VARCHAR(100) NOT NULL,
                 entradilla DATETIME DEFAULT CURRENT_TIMESTAMP,
                 texto TEXT NOT NULL,
@@ -90,13 +86,9 @@ async function initDb () {
             )`)
                 
                 console.log('Tablas creadas.');
+            } 
             
-                // Crear ENUM de categorías
-                await connection.query(`
-                    CREATE TYPE categoria_viaje AS ENUM ('Aventura', 'Single', 'Parejas', 'Familia', 'Cultura', 'Gastronomía', 'Playa', 'Montaña', 'Naturaleza');
-                `);
-
-            } catch (error) {
+            catch (error) {
                 console.log(error.message);
                 
             } finally{
