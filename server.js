@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const fileUpload = require("express-fileupload");
 const cors = require("cors");
+const patch = require("path");
 
 require("dotenv").config();
 const { port } = process.env;
@@ -9,6 +10,12 @@ const { port } = process.env;
 const getEntradas = require("./rutas/rutasentradas");
 const getUsuarios = require("./rutas/rutasusuarios");
 
+const rutaImagenesPerfil = patch.join(__dirname, "avatar")
+const rutaImagenesPosts = patch.join(__dirname, "fotos")
+
+//Middleware para ruta statica
+app.use(express.static(rutaImagenesPerfil))
+app.use(express.static(rutaImagenesPosts))
 //Middleware para req.body
 app.use(express.json());
 // cors para poder llamarlo desde el frontend sin que ponga pegas

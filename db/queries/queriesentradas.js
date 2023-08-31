@@ -2,23 +2,22 @@ const generarError = require("../../helpers/generarError");
 const getPool = require("../pool");
 
 // Coger todos las entradas ordenado por votos o fecha(Entradilla)
-async function getAll(votos = "entradilla") {
+async function getAll(votos) {
   let connection;
   let entradas;
   try {
     connection = await getPool();
-    if (votos == "votos") {
+    if (votos) {
       [entradas] = await connection.query(
         "SELECT e.*, COUNT(v.id) AS total_votos, u.name, u.avatar FROM entradas e LEFT JOIN votos v ON e.id = v.entrada_id LEFT JOIN usuarios u ON e.user_id = u.id GROUP BY e.id ORDER BY total_votos DESC LIMIT 3"
       );
     } else {
       [entradas] = await connection.query(
-        "SELECT e.*, u.name, u.avatar FROM entradas e LEFT JOIN usuarios u ON e.user_id = u.id GROUP BY e.id ORDER BY ?? DESC LIMIT 3",
-        [votos]
+        "SELECT e.*, COUNT(v.id) AS total_votos, u.name, u.avatar FROM entradas e LEFT JOIN votos v ON e.id = v.entrada_id LEFT JOIN usuarios u ON e.user_id = u.id GROUP BY e.id ORDER BY entradilla DESC LIMIT 3",
       );
     }
 
-    return entradas[0];
+    return entradas;
   } finally {
     if (connection) {
       connection.release();
@@ -103,36 +102,8 @@ async function getVotosId(id) {
 }
 
 // Filtrar por lugar o categoría ordenado por votos o fecha(Entradilla)
-async function getConsulta(lugar, categoria) {
-  let connection;
 
-  try {
-    connection = await getPool();
-
-    const [consulta1] = await connection.query(
-      "SELECT e.*, u.name, u.avatar FROM entradas e LEFT JOIN usuarios u ON e.user_id = u.id WHERE lugar like ? AND categoria = ? GROUP BY e.id ORDER BY 'entradilla' DESC LIMIT 3",
-      [`%${lugar}%`, categoria]
-    );
-
-    const [consulta2] = await connection.query(
-      "SELECT e.*, u.name, u.avatar FROM entradas e LEFT JOIN usuarios u ON e.user_id = u.id WHERE lugar like ? OR categoria = ? GROUP BY e.id ORDER BY 'entradilla' DESC LIMIT 3",
-      [`%${lugar}%`, categoria]
-    );
-
-    if (consulta1.length > 0) {
-      return consulta1[0];
-    } else if (consulta2.length > 0) {
-      return consulta2[0];
-    } else {
-      return (consulta3 = "No se han encontrado coincidencias");
-    }
-  } finally {
-    if (connection) {
-      connection.release();
-    }
-  }
-}
-async function getConsultaVotos(lugar, categoria) {
+async function getConsulta(lugar, categoria, votos = "entradilla") {
   let connection;
 
   try {
@@ -140,36 +111,36 @@ async function getConsultaVotos(lugar, categoria) {
 
     const [consulta1] = await connection.query(
       `
-      SELECT e.*, u.name, u.avatar, COUNT(v.id) AS total_votos
+      SELECT e.*, u.name, u.avatar, COUNT(v.id) AS votos
       FROM entradas e
       LEFT JOIN votos v ON e.id = v.entrada_id
       LEFT JOIN usuarios u ON e.user_id = u.id
       WHERE e.lugar LIKE ? AND e.categoria = ?
       GROUP BY e.id
-      ORDER BY total_votos DESC
+      ORDER BY ?? DESC
       LIMIT 3;
     `,
-      [`%${lugar}%`, categoria]
+      [`%${lugar}%`, categoria, votos]
     );
 
     const [consulta2] = await connection.query(
       `
-      SELECT e.*, u.name, u.avatar, COUNT(v.id) AS total_votos
+      SELECT e.*, u.name, u.avatar, COUNT(v.id) AS votos
       FROM entradas e
       LEFT JOIN votos v ON e.id = v.entrada_id
       LEFT JOIN usuarios u ON e.user_id = u.id
       WHERE e.lugar LIKE ? OR e.categoria = ?
       GROUP BY e.id
-      ORDER BY total_votos DESC
+      ORDER BY ?? DESC
       LIMIT 3;
     `,
-      [`%${lugar}%`, categoria]
+      [`%${lugar}%`, categoria, votos]
     );
 
     if (consulta1.length > 0) {
-      return consulta1[0];
+      return consulta1;
     } else if (consulta2.length > 0) {
-      return consulta2[0];
+      return consulta2;
     } else {
       return (consulta3 = "No se han encontrado coincidencias");
     }
@@ -304,7 +275,6 @@ async function comentarRecomendacion(comentario, entrada_id, user_id, imagen) {
 module.exports = {
   getAll,
   getConsulta,
-  getConsultaVotos,
   entradaNueva,
   yaVotado,
   votar,

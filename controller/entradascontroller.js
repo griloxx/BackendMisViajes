@@ -8,7 +8,6 @@ const {
   comentarRecomendacion,
   yaVotado,
   quitarVotos,
-  getConsultaVotos,
   getCommentsId,
   getFotosId,
   getVotosId,
@@ -21,13 +20,8 @@ const guardarFoto = require("../servicios/savephoto");
 async function listar(req, res, next) {
   let entradas;
   try {
-    if (!req.query.votos) {
-      entradas = await getAll();
-    } else {
       const { votos } = req.query;
       entradas = await getAll(votos);
-    }
-
     if (!entradas) {
       res.json({
         status: "ok",
@@ -67,13 +61,9 @@ async function detalles(req, res, next) {
 async function consulta(req, res, next) {
   let consulta;
   try {
-    if (!req.body.votos) {
-      const { lugar, categoria } = req.body;
-      consulta = await getConsulta(lugar, categoria);
-    } else {
-      const { lugar, categoria } = req.body;
-      consulta = await getConsultaVotos(lugar, categoria);
-    }
+      const { lugar, categoria, votos } = req.body;
+      consulta = await getConsulta(lugar, categoria, votos);
+
     res.json(consulta);
   } catch (error) {
     next(error);
