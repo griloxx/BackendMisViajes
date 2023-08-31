@@ -189,7 +189,7 @@ async function deleteAvatar(req, res, next) {
     const rutaAvatar = path.resolve(__dirname, "../", RUTA_AVATAR, avatar);
 
     await fs.unlink(rutaAvatar);
-    await avatarEliminado(id, avatar);
+    await avatarEliminado(id);
     res.json({
       status: "ok",
       message: "foto borrada con éxito",

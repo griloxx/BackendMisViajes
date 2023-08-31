@@ -236,16 +236,22 @@ async function deleteEntrada(id, creator_id) {
 
   try {
     connection = await getPool();
-    const [consulaEntrada] = await connection.query(
+ 
+    const [consultarEntrada] = await connection.query(
       "SELECT * FROM entradas WHERE id = ?",
       [id]
     );
-    if (consulaEntrada[0].user_id === creator_id) {
+    const [consultarFotos] = await connection.query(
+      "SELECT * FROM fotosentradas WHERE entrada_id = ?",
+      [id]
+    );
+
+    if (consultarEntrada [0].user_id === creator_id) {
       const [borrarEntrada] = await connection.query(
         "DELETE FROM entradas WHERE id = ?",
         [id]
       );
-      return borrarEntrada;
+      return {borrarEntrada, consultarFotos};
     }
     generarError("Usted no tiene derecho a borrar la entrada");
   } finally {

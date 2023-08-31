@@ -134,7 +134,7 @@ async function editarPerfil(id, name = null, password = null, avatar = null) {
   }
 }
 
-async function avatarEliminado(id, avatar) {
+async function avatarEliminado(id) {
   let connection;
   try {
     connection = await getPool();
