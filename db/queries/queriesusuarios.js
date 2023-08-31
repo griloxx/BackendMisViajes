@@ -98,7 +98,7 @@ async function editarPerfil(id, name = null, password = null, avatar = null) {
   try {
     connection = await getPool();
 
-    if (name === null) {
+    if (!name) {
       [nameBd] = await connection.query(
         "SELECT name FROM usuarios WHERE id = ?",
         [id]
@@ -106,7 +106,7 @@ async function editarPerfil(id, name = null, password = null, avatar = null) {
       name = nameBd[0].name;
     }
 
-    if (avatar === null) {
+    if (!avatar) {
       [avatarBd] = await connection.query(
         "SELECT avatar FROM usuarios WHERE id = ?",
         [id]
@@ -114,7 +114,7 @@ async function editarPerfil(id, name = null, password = null, avatar = null) {
       avatar = avatarBd[0].avatar;
     }
 
-    if (password === null) {
+    if (!password) {
       [passwordBd] = await connection.query(
         "SELECT password FROM usuarios WHERE id = ?",
         [id]
@@ -134,36 +134,10 @@ async function editarPerfil(id, name = null, password = null, avatar = null) {
   }
 }
 
-async function editarAvatar(id) {
-  let connection;
-  
-  try {
-    connection = await getPool();
-
-    
-
-    
-    const [avatarBd] = await connection.query(
-      "SELECT avatar FROM usuarios WHERE id = ?",
-      [id]
-      );
-  
-    return avatarBd[0].avatar;
-    
-
-    
-
-    
-  } finally {
-    if (connection) connection.release();
-  }
-}
-
 module.exports = {
   crearUsuario,
   actualizarCodigo,
   getUsuarioBy,
   comprobarActivo,
   editarPerfil,
-  editarAvatar
 };

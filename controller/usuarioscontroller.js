@@ -16,7 +16,6 @@ const {
   getUsuarioBy,
   comprobarActivo,
   editarPerfil,
-  editarAvatar,
 } = require("../db/queries/queriesusuarios.js");
 const { validacionUsuario } = require("../helpers/validacionemail.js");
 
@@ -132,7 +131,8 @@ async function login(req, res, next) {
 async function modificarPerfil(req, res, next) {
   try {
     await esquemaEditarPerfil.validateAsync(req.body);
-    const { id } = req.params;
+    
+    const { id } = req.user;
     const { name, password } = req.body;
     let nombreAvatar;
     let passwordHash;
@@ -142,7 +142,7 @@ async function modificarPerfil(req, res, next) {
     }
     
     let rutaAvatar;
-    const oldAvatar = await editarAvatar(id);
+    const oldAvatar = req.user.avatar
     if (oldAvatar) {
       rutaAvatar = path.resolve(__dirname, "../", RUTA_AVATAR, oldAvatar);
     }
