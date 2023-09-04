@@ -15,7 +15,7 @@ router.post("/login", controlador.login);
 
 // Modificar perfil
 router.put(
-  "/perfil/:id",
+  "/perfil",
   autenticacion,
   usuarioExiste,
   auth,
