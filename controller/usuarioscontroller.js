@@ -143,6 +143,7 @@ async function modificarPerfil(req, res, next) {
 
     let rutaAvatar;
     const oldAvatar = req.user.avatar;
+    
     if (oldAvatar) {
       rutaAvatar = path.resolve(__dirname, "../", RUTA_AVATAR, oldAvatar);
     }
