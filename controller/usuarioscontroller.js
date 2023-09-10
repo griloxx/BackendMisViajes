@@ -163,7 +163,6 @@ async function modificarPerfil(req, res, next) {
       passwordHash,
       nombreAvatar
     );
-
     const tokenInfo = {
       id: actualizarperfil.id,
       name: actualizarperfil.name,

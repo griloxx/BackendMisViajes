@@ -16,14 +16,14 @@ async function guardarAvatar(avatar) {
       await fs.mkdir(rutaAvatar);
     }
 
-    const nombreAvatar = (archivo) => {
+    const nombreAvatar = async (archivo) => {
       const sharpImg = sharp(archivo.data);
       sharpImg.resize(100);
       const nombreAletorio = crypto.randomUUID();
       const extension = path.extname(archivo.name);
       const nombreFoto = `${nombreAletorio}${extension}`;
       const rutaCompleta = path.join(rutaAvatar, nombreFoto);
-      sharpImg.toFile(rutaCompleta);
+      await sharpImg.toFile(rutaCompleta);
       return nombreFoto;
     };
 
