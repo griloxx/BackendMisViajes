@@ -15,6 +15,7 @@ const esquemaLogin = joi.object({
 const esquemaEditarPerfil = joi.object({
   name: joi.string().min(2).max(50),
   password: joi.string().min(6).max(100),
+  avatar: joi.allow("")
 }).options({ abortEarly: false });
 
 module.exports = { esquemaRegistro, esquemaLogin, esquemaEditarPerfil };

@@ -153,7 +153,10 @@ async function modificarPerfil(req, res, next) {
       const { avatar } = req.files;
       nombreAvatar = await guardarAvatar(avatar);
     }
-
+    if(req.body?.avatar === "sinAvatar") {
+      oldAvatar && (await fs.unlink(rutaAvatar));
+      nombreAvatar = "sinAvatar";
+    }
     const actualizarperfil = await editarPerfil(
       id,
       name,

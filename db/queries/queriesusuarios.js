@@ -122,7 +122,9 @@ async function editarPerfil(id, name = null, password = null, avatar = null) {
       );
       password = passwordBd[0].password;
     }
-
+    if(avatar === "sinAvatar") {
+      avatar = null;
+    }
     await connection.query(
       "UPDATE usuarios SET name = ?, password = ?, avatar = ? WHERE id = ?",
       [name, password, avatar, id]
