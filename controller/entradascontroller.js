@@ -30,8 +30,23 @@ async function listar(req, res, next) {
         message: "No se a encontado ninguna entrada",
       });
     }
+    entradas = await Promise.all(entradas.map(async (entrada) => {
+      entrada.fotos = await getFotosId(entrada.id);
+      return entrada
+    }))
 
-    res.json(entradas);
+    if (req.user?.id) {
+      const userId = req.user.id;
+      entradas = await Promise.all(entradas.map(async (entrada) => {
+        entrada.yaVotado = await yaVotado(entrada.id, userId);
+        return entrada
+      }))
+    }
+    
+    res.json({
+      status: "ok",
+      data: entradas
+    });
   } catch (error) {
     next(error);
   }

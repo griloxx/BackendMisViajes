@@ -193,7 +193,6 @@ async function yaVotado(entradaId, id) {
       "SELECT * FROM votos WHERE entrada_id = ? AND user_id = ?",
       [entradaId, id]
     );
-
     return votos[0];
   } finally {
     if (connection) connection.release();
