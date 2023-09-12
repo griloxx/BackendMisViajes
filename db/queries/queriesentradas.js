@@ -9,11 +9,11 @@ async function getAll(votos) {
     connection = await getPool();
     if (votos) {
       [entradas] = await connection.query(
-        "SELECT e.*, COUNT(v.id) AS total_votos, u.name, u.avatar FROM entradas e LEFT JOIN votos v ON e.id = v.entrada_id LEFT JOIN usuarios u ON e.user_id = u.id GROUP BY e.id ORDER BY total_votos DESC LIMIT 3"
+        "SELECT e.*, COUNT(v.id), AS total_votos, COUNT(c.id) AS total_comments, u.name, u.avatar FROM entradas e LEFT JOIN votos v ON e.id = v.entrada_id LEFT JOIN usuarios u ON e.user_id = u.id LEFT JOIN comentarios c ON e.id = c.entrada_id GROUP BY e.id ORDER BY total_votos DESC LIMIT 3"
       );
     } else {
       [entradas] = await connection.query(
-        "SELECT e.*, COUNT(v.id) AS total_votos, u.name, u.avatar FROM entradas e LEFT JOIN votos v ON e.id = v.entrada_id LEFT JOIN usuarios u ON e.user_id = u.id GROUP BY e.id ORDER BY entradilla DESC LIMIT 3",
+        "SELECT e.*, COUNT(v.id) AS total_votos, COUNT(c.id) AS total_comments, u.name, u.avatar FROM entradas e LEFT JOIN votos v ON e.id = v.entrada_id LEFT JOIN usuarios u ON e.user_id = u.id LEFT JOIN comentarios c ON e.id = c.entrada_id GROUP BY e.id ORDER BY entradilla DESC LIMIT 3",
       );
     }
 
