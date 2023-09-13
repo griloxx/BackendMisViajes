@@ -9,11 +9,11 @@ async function getAll(votos) {
     connection = await getPool();
     if (votos) {
       [entradas] = await connection.query(
-        "SELECT e.*, COUNT(v.id) AS total_votos, COUNT(c.id) AS total_comments, u.name, u.avatar FROM entradas e LEFT JOIN votos v ON e.id = v.entrada_id LEFT JOIN usuarios u ON e.user_id = u.id LEFT JOIN comentarios c ON e.id = c.entrada_id GROUP BY e.id ORDER BY total_votos DESC LIMIT 3"
+        "SELECT e.*, COUNT(c.id) AS total_comments, u.name, u.avatar FROM entradas e LEFT JOIN usuarios u ON e.user_id = u.id LEFT JOIN comentarios c ON e.id = c.entrada_id GROUP BY e.id ORDER BY total_votos DESC LIMIT 3"
       );
     } else {
       [entradas] = await connection.query(
-        "SELECT e.*, COUNT(v.id) AS total_votos, COUNT(c.id) AS total_comments, u.name, u.avatar FROM entradas e LEFT JOIN votos v ON e.id = v.entrada_id LEFT JOIN usuarios u ON e.user_id = u.id LEFT JOIN comentarios c ON e.id = c.entrada_id GROUP BY e.id ORDER BY entradilla DESC LIMIT 3",
+        "SELECT e.*, COUNT(c.id) AS total_comments, u.name, u.avatar FROM entradas e LEFT JOIN usuarios u ON e.user_id = u.id LEFT JOIN comentarios c ON e.id = c.entrada_id GROUP BY e.id ORDER BY entradilla DESC LIMIT 3",
       );
     }
 
@@ -87,10 +87,10 @@ async function getVotosId(id) {
     connection = await getPool();
 
     const [entradas] = await connection.query(
-      "SELECT COUNT(v.id) AS total_votos FROM votos v LEFT JOIN entradas e ON v.entrada_id = e.id WHERE v.entrada_id = ? GROUP BY v.id",
+      "SELECT COUNT(v.id) AS total_votos FROM votos v WHERE v.entrada_id = ?",
       [id]
     );
-    if (entradas.id) {
+    if (entradas[0]) {
       return entradas[0].total_votos;
     }
     return;

@@ -32,8 +32,10 @@ async function listar(req, res, next) {
     }
     entradas = await Promise.all(entradas.map(async (entrada) => {
       entrada.fotos = await getFotosId(entrada.id);
+      entrada.votos = await getVotosId(entrada.id);
       return entrada
     }))
+    
 
     if (req.user?.id) {
       const userId = req.user.id;
