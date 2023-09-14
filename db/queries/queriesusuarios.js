@@ -81,7 +81,7 @@ async function getUsuarioBy(objecto) {
   try {
     connection = await getPool();
     const [usuario] = await connection.query(
-      "SELECT * FROM usuarios WHERE ?? = ?",
+      "SELECT id, name, email, create_date, avatar FROM usuarios WHERE ?? = ?",
       [llave, valor]
     );
     return usuario[0];
