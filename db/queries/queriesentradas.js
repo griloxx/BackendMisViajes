@@ -2,20 +2,15 @@ const generarError = require("../../helpers/generarError");
 const getPool = require("../pool");
 
 // Coger todos las entradas ordenado por votos o fecha(Entradilla)
-async function getAll(votos) {
+async function getAll() {
   let connection;
   let entradas;
   try {
     connection = await getPool();
-    if (votos) {
-      [entradas] = await connection.query(
-        "SELECT e.*, COUNT(c.id) AS total_comments, u.name, u.avatar FROM entradas e LEFT JOIN usuarios u ON e.user_id = u.id LEFT JOIN comentarios c ON e.id = c.entrada_id GROUP BY e.id ORDER BY total_votos DESC LIMIT 3"
-      );
-    } else {
-      [entradas] = await connection.query(
-        "SELECT e.*, COUNT(c.id) AS total_comments, u.name, u.avatar FROM entradas e LEFT JOIN usuarios u ON e.user_id = u.id LEFT JOIN comentarios c ON e.id = c.entrada_id GROUP BY e.id ORDER BY entradilla DESC LIMIT 3",
-      );
-    }
+
+    [entradas] = await connection.query(
+      "SELECT e.*, COUNT(c.id) AS total_comments, u.name, u.avatar FROM entradas e LEFT JOIN usuarios u ON e.user_id = u.id LEFT JOIN comentarios c ON e.id = c.entrada_id GROUP BY e.id ORDER BY entradilla",
+    );
 
     return entradas;
   } finally {
@@ -100,6 +95,26 @@ async function getVotosId(id) {
     }
   }
 }
+async function getCountCommentsId(id) {
+  let connection;
+
+  try {
+    connection = await getPool();
+
+    const [entradas] = await connection.query(
+      "SELECT COUNT(c.id) AS comments FROM comentarios c WHERE c.entrada_id = ?",
+      [id]
+    );
+    if (entradas[0]) {
+      return entradas[0].comments;
+    }
+    return;
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
+}
 
 // Filtrar por lugar o categoría ordenado por votos o fecha(Entradilla)
 
@@ -109,41 +124,36 @@ async function getConsulta(lugar, categoria, votos = "entradilla") {
   try {
     connection = await getPool();
 
-    const [consulta1] = await connection.query(
+    let consulta = (
       `
       SELECT e.*, u.name, u.avatar, COUNT(v.id) AS votos
       FROM entradas e
       LEFT JOIN votos v ON e.id = v.entrada_id
       LEFT JOIN usuarios u ON e.user_id = u.id
-      WHERE e.lugar LIKE ? AND e.categoria = ?
-      GROUP BY e.id
-      ORDER BY ?? DESC
-      LIMIT 3;
-    `,
-      [`%${lugar}%`, categoria, votos]
-    );
+    `
+    )
 
-    const [consulta2] = await connection.query(
-      `
-      SELECT e.*, u.name, u.avatar, COUNT(v.id) AS votos
-      FROM entradas e
-      LEFT JOIN votos v ON e.id = v.entrada_id
-      LEFT JOIN usuarios u ON e.user_id = u.id
-      WHERE e.lugar LIKE ? OR e.categoria = ?
-      GROUP BY e.id
-      ORDER BY ?? DESC
-      LIMIT 3;
-    `,
-      [`%${lugar}%`, categoria, votos]
-    );
+    let clause = "WHERE";
+    let values = [];
 
-    if (consulta1.length > 0) {
-      return consulta1;
-    } else if (consulta2.length > 0) {
-      return consulta2;
-    } else {
-      return (consulta3 = "No se han encontrado coincidencias");
-    }
+    if (lugar) {
+      consulta += ` ${clause} e.lugar LIKE ?`;
+      values.push(`%${lugar}%`);
+      clause = "AND";
+    } 
+
+    if (categoria) {
+      consulta += ` ${clause} e.categoria = ?`;
+      values.push(categoria)
+    } 
+
+    consulta += ` GROUP BY e.id ORDER BY ?? DESC`;
+    values.push(votos)
+
+    const [resultado] = await connection.query(consulta, values);
+    
+    return resultado
+    
   } finally {
     if (connection) {
       connection.release();
@@ -286,6 +296,7 @@ module.exports = {
   quitarVotos,
   getId,
   getCommentsId,
+  getCountCommentsId,
   getFotosId,
   getVotosId,
   deleteEntrada,

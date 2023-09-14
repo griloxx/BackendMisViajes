@@ -12,6 +12,7 @@ const {
   getCommentsId,
   getFotosId,
   getVotosId,
+  getCountCommentsId,
 } = require("../db/queries/queriesentradas");
 const generarError = require("../helpers/generarError");
 const esquemasEntradas = require("../schemas/esquemasentradas");
@@ -22,8 +23,7 @@ const fs = require("fs/promises");
 async function listar(req, res, next) {
   let entradas;
   try {
-    const { votos } = req.query;
-    entradas = await getAll(votos);
+    entradas = await getAll();
     if (!entradas) {
       res.json({
         status: "ok",
@@ -33,6 +33,7 @@ async function listar(req, res, next) {
     entradas = await Promise.all(entradas.map(async (entrada) => {
       entrada.fotos = await getFotosId(entrada.id);
       entrada.votos = await getVotosId(entrada.id);
+
       return entrada
     }))
     
@@ -79,12 +80,29 @@ async function detalles(req, res, next) {
 
 // Función asincrona para realizar consultas de lugar y/o categoria
 async function consulta(req, res, next) {
-  let consulta;
+  let consultas;
   try {
     const { lugar, categoria, votos } = req.query;
-    consulta = await getConsulta(lugar, categoria, votos);
+    consultas = await getConsulta(lugar, categoria, votos);
+    consultas = await Promise.all(consultas.map(async (consulta) => {
+      consulta.total_comments = await getCountCommentsId(consulta.id);
+      consulta.fotos = await getFotosId(consulta.id);
 
-    res.json(consulta);
+      return consulta
+    }))
+
+    if (req.user?.id) {
+      const userId = req.user.id;
+      consultas = await Promise.all(consultas.map(async (consulta) => {
+        consulta.yaVotado = await yaVotado(consulta.id, userId);
+        return consulta
+      }))
+    }
+
+    res.json({
+      status: "ok",
+      data: consultas
+    });
   } catch (error) {
     next(error);
   }
@@ -133,7 +151,7 @@ async function votarEntrada(req, res, next) {
     const { id } = req.user;
     let votos;
     const votado = await yaVotado(entradaId, id);
-
+    
     votado
       ? (votos = await quitarVotos(entradaId, id))
       : (votos = await votar(entradaId, id));

@@ -17,6 +17,7 @@ const {
   comprobarActivo,
   editarPerfil,
   avatarEliminado,
+  getEntradaByUserId,
 } = require("../db/queries/queriesusuarios.js");
 const { validacionUsuario } = require("../helpers/validacionemail.js");
 
@@ -184,6 +185,22 @@ async function modificarPerfil(req, res, next) {
   }
 }
 
+async function usuario(req, res, next) {
+  try {
+    let datos = [];
+    const { id } = req.user;
+
+    datos = await getUsuarioBy({id});
+    datos.entradas = await getEntradaByUserId({id});
+    res.json({
+      status: "ok",
+      data: datos
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 async function deleteAvatar(req, res, next) {
   try {
     const { id, avatar } = req.user;
@@ -206,5 +223,6 @@ module.exports = {
   validarCodigo,
   login,
   modificarPerfil,
+  usuario,
   deleteAvatar,
 };

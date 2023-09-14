@@ -84,8 +84,22 @@ async function getUsuarioBy(objecto) {
       "SELECT * FROM usuarios WHERE ?? = ?",
       [llave, valor]
     );
-
     return usuario[0];
+  } finally {
+    if (connection) connection.release();
+  }
+}
+async function getEntradaByUserId({id}) {
+
+  let connection;
+  try {
+    connection = await getPool();
+    const [usuario] = await connection.query(
+      "SELECT * FROM entradas WHERE user_id = ?",
+      [id]
+    );
+      
+    return usuario;
   } finally {
     if (connection) connection.release();
   }
@@ -154,6 +168,7 @@ module.exports = {
   crearUsuario,
   actualizarCodigo,
   getUsuarioBy,
+  getEntradaByUserId,
   comprobarActivo,
   editarPerfil,
   avatarEliminado,

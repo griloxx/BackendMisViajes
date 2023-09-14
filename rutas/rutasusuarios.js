@@ -13,6 +13,15 @@ router.get("/validacion/:codigoRegistro", controlador.validarCodigo);
 // Login de usuario
 router.post("/login", controlador.login);
 
+// Ruta datos usuario
+router.get(
+  "/usuario",
+  autenticacion,
+  usuarioExiste,
+  auth,
+  controlador.usuario
+);
+
 // Modificar perfil
 router.put(
   "/perfil",
