@@ -25,6 +25,7 @@ const { validacionUsuario } = require("../helpers/validacionemail.js");
 const sendMail = require("../servicios/envioemail.js");
 const generarError = require("../helpers/generarError.js");
 const guardarAvatar = require("../servicios/avatar.js");
+const { getFotosId, getVotosId, yaVotado } = require("../db/queries/queriesentradas.js");
 
 // Controlador de registro de usuarios
 async function registro(req, res, next) {
@@ -193,6 +194,14 @@ async function usuario(req, res, next) {
 
     datos = await getUsuarioBy({id});
     datos.entradas = await getEntradaByUserId({id});
+    datos.entradas = await Promise.all(datos.entradas.map(async (entrada) => {
+      entrada.fotos = await getFotosId(entrada.id);
+      entrada.votos = await getVotosId(entrada.id);
+      entrada.yaVotado = await yaVotado(entrada.id, id);
+
+      return entrada
+    }))
+    
     res.json({
       status: "ok",
       data: datos
