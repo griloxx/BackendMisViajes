@@ -198,6 +198,7 @@ async function usuario(req, res, next) {
       entrada.fotos = await getFotosId(entrada.id);
       entrada.votos = await getVotosId(entrada.id);
       entrada.yaVotado = await yaVotado(entrada.id, id);
+      entrada.avatar = datos.avatar;
 
       return entrada
     }))

@@ -111,7 +111,7 @@ async function getEntradaByUserId({id}) {
   try {
     connection = await getPool();
     const [usuario] = await connection.query(
-      "SELECT * FROM entradas WHERE user_id = ?",
+      "SELECT e.*, COUNT(c.id) AS total_comments FROM entradas e LEFT JOIN comentarios c ON e.id = c.entrada_id WHERE e.user_id = ? GROUP BY e.id",
       [id]
     );
       
