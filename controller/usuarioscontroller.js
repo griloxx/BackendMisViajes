@@ -105,9 +105,9 @@ async function login(req, res, next) {
     if (!autorizado) generarError("Usuario o contraseña errónea.", 401);
     
     const usuarioActivado = await comprobarActivo(usuario.id);
-
+    console.log(usuarioActivado)
     // Si hay codigo de registro lanzamos error
-    if (usuarioActivado > 0) generarError("Usuario no activado", 401);
+    if (usuarioActivado.codigoRegistro) generarError("Usuario no activado", 401);
     
     // Creamos objeto con los datos que queremos del usuario en el token
     const tokenInfo = {

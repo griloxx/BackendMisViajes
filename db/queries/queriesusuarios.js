@@ -62,12 +62,12 @@ async function comprobarActivo(id) {
   try {
     connection = await getPool();
     // Comprobamos que el codigo de registro ya está borrado
-    const verificar = await connection.query(
+    const [verificar] = await connection.query(
       "SELECT codigoRegistro FROM usuarios WHERE id = ?",
       [id]
     );
 
-    return verificar;
+    return verificar[0];
   } finally {
     if (connection) connection.release();
   }
