@@ -29,7 +29,7 @@ async function getId(id) {
     connection = await getPool();
 
     const [entradas] = await connection.query(
-      "SELECT e.*, u.name, u.avatar, COUNT(v.id) AS total_votos, COUNT(c.id) AS total_comments FROM entradas e LEFT JOIN votos v ON e.id = v.entrada_id LEFT JOIN usuarios u ON e.user_id = u.id LEFT JOIN comentarios c ON e.id = c.entrada_id WHERE e.id = ? GROUP BY e.id",
+      "SELECT e.*, u.name, u.avatar FROM entradas e LEFT JOIN usuarios u ON e.user_id = u.id WHERE e.id = ? GROUP BY e.id",
       [id]
     );
 

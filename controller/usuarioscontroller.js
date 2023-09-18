@@ -105,7 +105,7 @@ async function login(req, res, next) {
     if (!autorizado) generarError("Usuario o contraseña errónea.", 401);
     
     const usuarioActivado = await comprobarActivo(usuario.id);
-    console.log(usuarioActivado)
+    
     // Si hay codigo de registro lanzamos error
     if (usuarioActivado.codigoRegistro) generarError("Usuario no activado", 401);
     
