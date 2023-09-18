@@ -73,6 +73,22 @@ async function comprobarActivo(id) {
   }
 }
 
+async function getAllUsuarioBy(objecto) {
+  const [llave] = Object.keys(objecto);
+  const valor = objecto[llave];
+
+  let connection;
+  try {
+    connection = await getPool();
+    const [usuario] = await connection.query(
+      "SELECT * FROM usuarios WHERE ?? = ?",
+      [llave, valor]
+    );
+    return usuario[0];
+  } finally {
+    if (connection) connection.release();
+  }
+}
 async function getUsuarioBy(objecto) {
   const [llave] = Object.keys(objecto);
   const valor = objecto[llave];
@@ -167,6 +183,7 @@ async function avatarEliminado(id) {
 module.exports = {
   crearUsuario,
   actualizarCodigo,
+  getAllUsuarioBy,
   getUsuarioBy,
   getEntradaByUserId,
   comprobarActivo,
