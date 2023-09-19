@@ -192,6 +192,37 @@ async function entradaNueva(
     if (connection) connection.release();
   }
 }
+async function modificarEntrada(
+  titulo,
+  categoria,
+  lugar,
+  texto,
+  user_id,
+  savePhoto,
+  entrada_id
+) {
+  let connection;
+
+  try {
+    connection = await getPool();
+
+    const [insertarEntrada] = await connection.query(
+      "UPDATE entradas SET titulo = ?, categoria = ?, lugar = ?, texto = ?, user_id = ? WHERE id = ?",
+      [titulo, categoria, lugar, texto, user_id, entrada_id]
+    );
+
+    savePhoto.forEach(async (foto) => {
+      await connection.query(
+        "INSERT INTO fotosEntradas (entrada_id, foto) VALUES(?,?)",
+        [entrada_id, foto]
+      );
+    });
+
+    return insertarEntrada.affectedRows;
+  } finally {
+    if (connection) connection.release();
+  }
+}
 
 // Comprobar que ya a votado
 
@@ -305,6 +336,7 @@ module.exports = {
   getAll,
   getConsulta,
   entradaNueva,
+  modificarEntrada,
   yaVotado,
   votar,
   quitarVotos,

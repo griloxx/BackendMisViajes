@@ -14,6 +14,7 @@ const {
   getVotosId,
   getCountCommentsId,
   fotoEliminada,
+  modificarEntrada,
 } = require("../db/queries/queriesentradas");
 const generarError = require("../helpers/generarError");
 const esquemasEntradas = require("../schemas/esquemasentradas");
@@ -159,14 +160,16 @@ async function modificar(req, res, next) {
     }
     const entrada = await getId(entradaId);
 
+    const fotosEntrada = await getFotosId(entradaId);
+    
     const { id } = req.user;
     if ( id !== entrada.user_id) {
       generarError("No tiene derechos para modificar esta entrada", 401)
     }
 
     
-    if (!foto) {
-      generarError("Al menos una foto nueva es obligatoria", 400);
+    if (!foto && fotosEntrada.length == 0) {
+      generarError("Al menos una foto es obligatoria", 400);
     }
     //Guardar fotos en la carpeta fotos
 
@@ -174,20 +177,20 @@ async function modificar(req, res, next) {
 
     //Guardar entrada en la BD
 
-    // const insertarEntrada = await entradaNueva(
-    //   titulo,
-    //   categoria,
-    //   lugar,
-    //   texto,
-    //   id,
-    //   savePhoto,
-    //   entradaId
-    // );
+    const insertarEntrada = await modificarEntrada(
+      titulo,
+      categoria,
+      lugar,
+      texto,
+      id,
+      savePhoto,
+      entradaId
+    );
 
     res.json({
       status: "ok",
-      message: "Entrada insertada con éxito",
-      // data: insertarEntrada,
+      message: "Entrada modificada con éxito",
+      data: insertarEntrada,
     });
   } catch (error) {
     next(error);
