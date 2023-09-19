@@ -285,6 +285,20 @@ async function comentarRecomendacion(comentario, entrada_id, user_id, imagen) {
     if (connection) connection.release();
   }
 }
+async function fotoEliminada(id) {
+  let connection;
+  try {
+    connection = await getPool();
+    const [borrarFoto] = await connection.query(
+      "DELETE FROM fotosEntradas WHERE id = ? ",
+      [id]
+    );
+    
+    return borrarFoto;
+  } finally {
+    if (connection) connection.release();
+  }
+}
 
 // Exportamos las funciones
 module.exports = {
@@ -301,4 +315,5 @@ module.exports = {
   getVotosId,
   deleteEntrada,
   comentarRecomendacion,
+  fotoEliminada
 };

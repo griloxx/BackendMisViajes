@@ -13,11 +13,13 @@ const {
   getFotosId,
   getVotosId,
   getCountCommentsId,
+  fotoEliminada,
 } = require("../db/queries/queriesentradas");
 const generarError = require("../helpers/generarError");
 const esquemasEntradas = require("../schemas/esquemasentradas");
 const guardarFoto = require("../servicios/savephoto");
 const fs = require("fs/promises");
+const { RUTA_FOTOS } = process.env;
 
 // Función asincrona para listar de todas las entradas
 async function listar(req, res, next) {
@@ -144,6 +146,53 @@ async function crear(req, res, next) {
     next(error);
   }
 }
+async function modificar(req, res, next) {
+  try {
+    await esquemasEntradas.validateAsync(req.body);
+
+    const entradaId = req.params.id;
+    const { titulo, categoria, lugar, texto } = req.body;
+
+    let foto;
+    if (req.files?.foto) {
+      ({ foto } = req.files);
+    }
+    const entrada = await getId(entradaId);
+
+    const { id } = req.user;
+    if ( id !== entrada.user_id) {
+      generarError("No tiene derechos para modificar esta entrada", 401)
+    }
+
+    
+    if (!foto) {
+      generarError("Al menos una foto nueva es obligatoria", 400);
+    }
+    //Guardar fotos en la carpeta fotos
+
+    const savePhoto = await guardarFoto(Array.isArray(foto) ? foto : [foto]);
+
+    //Guardar entrada en la BD
+
+    // const insertarEntrada = await entradaNueva(
+    //   titulo,
+    //   categoria,
+    //   lugar,
+    //   texto,
+    //   id,
+    //   savePhoto,
+    //   entradaId
+    // );
+
+    res.json({
+      status: "ok",
+      message: "Entrada insertada con éxito",
+      // data: insertarEntrada,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
 
 async function votarEntrada(req, res, next) {
   try {
@@ -225,6 +274,30 @@ async function comentarEntrada(req, res, next) {
     next(error);
   }
 }
+async function deleteFoto(req, res, next) {
+  try {
+    const { id } = req.user;
+    const { foto_id } = req.params;
+    const { foto, entrada_id } = req.body;
+
+    const entrada = await getId(entrada_id);
+    if(entrada.user_id !== id) {
+      generarError("Usuario no autorizado", 401)
+    }
+    
+    const rutaFoto = path.resolve(__dirname, "../", RUTA_FOTOS, foto);
+
+    await fs.unlink(rutaFoto);
+    await fotoEliminada(foto_id);
+
+    res.json({
+      status: "ok",
+      message: "foto borrada con éxito",
+    });
+  } catch (error) {
+    next(error);
+  }
+}
 
 // Esportamos las funciones creadas
 module.exports = {
@@ -232,7 +305,9 @@ module.exports = {
   listar,
   consulta,
   crear,
+  modificar,
   votarEntrada,
   borrarEntrada,
   comentarEntrada,
+  deleteFoto
 };

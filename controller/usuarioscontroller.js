@@ -220,6 +220,7 @@ async function deleteAvatar(req, res, next) {
 
     await fs.unlink(rutaAvatar);
     await avatarEliminado(id);
+    
     res.json({
       status: "ok",
       message: "foto borrada con éxito",
