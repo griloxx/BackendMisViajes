@@ -9,7 +9,7 @@ async function getAll() {
     connection = await getPool();
 
     [entradas] = await connection.query(
-      "SELECT e.*, COUNT(c.id) AS total_comments, u.name, u.avatar FROM entradas e LEFT JOIN usuarios u ON e.user_id = u.id LEFT JOIN comentarios c ON e.id = c.entrada_id GROUP BY e.id ORDER BY entradilla",
+      "SELECT e.*, COUNT(c.id) AS total_comments, u.name, u.avatar FROM entradas e LEFT JOIN usuarios u ON e.user_id = u.id LEFT JOIN comentarios c ON e.id = c.entrada_id GROUP BY e.id ORDER BY entradilla DESC",
     );
 
     return entradas;
