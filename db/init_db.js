@@ -40,7 +40,7 @@ async function initDb () {
                 password VARCHAR(100) NOT NULL,
                 codigoRegistro VARCHAR(50),
                 create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-                avatar VARCHAR(50),
+                avatar VARCHAR(150),
                 PRIMARY KEY (id)
             )`);
             

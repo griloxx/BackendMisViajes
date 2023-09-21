@@ -38,6 +38,8 @@ async function registro(req, res, next) {
     if (req.files?.avatar) {
       ({ avatar } = req.files);
       nombreAvatar = await guardarAvatar(avatar);
+    } else if (req.body?.avatar) {
+      nombreAvatar = req.body.avatar;
     }
 
     //Generar codigo de registro
