@@ -124,6 +124,7 @@ async function login(req, res, next) {
 
     res.json({
       status: "ok",
+      message: "Login Correcto",
       data: {
         token,
       },
@@ -224,7 +225,7 @@ async function deleteAvatar(req, res, next) {
     
     res.json({
       status: "ok",
-      message: "foto borrada con correctamente",
+      message: "foto borrada correctamente",
     });
   } catch (error) {
     next(error);

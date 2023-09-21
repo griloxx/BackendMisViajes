@@ -140,7 +140,7 @@ async function crear(req, res, next) {
 
     res.json({
       status: "ok",
-      message: "Entrada insertada con correctamente",
+      message: "Entrada insertada correctamente",
       data: insertarEntrada,
     });
   } catch (error) {
@@ -189,7 +189,7 @@ async function modificar(req, res, next) {
 
     res.json({
       status: "ok",
-      message: "Entrada modificada con correctamente",
+      message: "Entrada modificada correctamente",
       data: insertarEntrada,
     });
   } catch (error) {
@@ -237,7 +237,7 @@ async function borrarEntrada(req, res, next) {
       generarError("La entrada no existe.", 404);
     res.json({
       status: "ok",
-      message: "Recomendación borrada con correctamente",
+      message: "Recomendación borrada correctamente",
     });
   } catch (error) {
     next(error);
@@ -270,7 +270,7 @@ async function comentarEntrada(req, res, next) {
 
     res.json({
       status: "ok",
-      message: "Comentario insertado con correctamente",
+      message: "Comentario insertado correctamente",
       data: comentar,
     });
   } catch (error) {
@@ -295,7 +295,7 @@ async function deleteFoto(req, res, next) {
 
     res.json({
       status: "ok",
-      message: "foto borrada con correctamente",
+      message: "foto borrada correctamente",
     });
   } catch (error) {
     next(error);
