@@ -32,7 +32,7 @@ async function registro(req, res, next) {
   try {
     await esquemaRegistro.validateAsync(req.body);
     const { name, email, password } = req.body;
-    
+
     let nombreAvatar;
     let avatar;
     if (req.files?.avatar) {
@@ -224,7 +224,7 @@ async function deleteAvatar(req, res, next) {
     
     res.json({
       status: "ok",
-      message: "foto borrada con éxito",
+      message: "foto borrada con correctamente",
     });
   } catch (error) {
     next(error);
