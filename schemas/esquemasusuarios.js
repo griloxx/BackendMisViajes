@@ -15,6 +15,7 @@ const esquemaRegistro = joi
       "string.min": "Email debe tener mínimo 5 caracteres",
       "string.max": "Email debe tener máximo 80 caracteres",
       "string.empty": "Email no puede estar vacío",
+      "string.email": "Email tiene que ser un email válido",
       "any.required": "Email es obligatorio",
     }),
     password: joi.string().min(6).max(100).required().messages({
