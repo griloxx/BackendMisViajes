@@ -9,9 +9,12 @@ const { port } = process.env;
 
 const getEntradas = require("./rutas/rutasentradas");
 const getUsuarios = require("./rutas/rutasusuarios");
+const morgan = require("morgan");
 
 const rutaImagenesPerfil = patch.join(__dirname, "avatar")
 const rutaImagenesPosts = patch.join(__dirname, "fotos")
+
+app.use(morgan('combined'));
 
 //Middleware para ruta statica
 app.use(express.static(rutaImagenesPerfil))
