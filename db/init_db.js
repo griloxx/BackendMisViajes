@@ -68,7 +68,7 @@ async function initDb () {
                 FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE
             )`)
 
-            await connection.query(`CREATE TABLE IF NOT EXISTS fotosEntradas(
+            await connection.query(`CREATE TABLE IF NOT EXISTS fotosentradas(
                 id INT UNSIGNED AUTO_INCREMENT,
                 entrada_id INT UNSIGNED NOT NULL,
                 foto VARCHAR(50) NOT NULL,

@@ -182,7 +182,7 @@ async function entradaNueva(
 
     savePhoto.forEach(async (foto) => {
       await connection.query(
-        "INSERT INTO fotosEntradas (entrada_id, foto) VALUES(?,?)",
+        "INSERT INTO fotosentradas (entrada_id, foto) VALUES(?,?)",
         [insertarEntrada.insertId, foto]
       );
     });
@@ -213,7 +213,7 @@ async function modificarEntrada(
 
     savePhoto.forEach(async (foto) => {
       await connection.query(
-        "INSERT INTO fotosEntradas (entrada_id, foto) VALUES(?,?)",
+        "INSERT INTO fotosentradas (entrada_id, foto) VALUES(?,?)",
         [entrada_id, foto]
       );
     });
@@ -321,7 +321,7 @@ async function fotoEliminada(id) {
   try {
     connection = await getPool();
     const [borrarFoto] = await connection.query(
-      "DELETE FROM fotosEntradas WHERE id = ? ",
+      "DELETE FROM fotosentradas WHERE id = ? ",
       [id]
     );
     
