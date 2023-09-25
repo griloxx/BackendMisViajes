@@ -26,6 +26,7 @@ const sendMail = require("../servicios/envioemail.js");
 const generarError = require("../helpers/generarError.js");
 const guardarAvatar = require("../servicios/avatar.js");
 const { getFotosId, getVotosId, yaVotado } = require("../db/queries/queriesentradas.js");
+const SaveProfileGoogleImage = require("../servicios/SaveProfileGoogleImage.js");
 
 // Controlador de registro de usuarios
 async function registro(req, res, next) {
@@ -39,9 +40,11 @@ async function registro(req, res, next) {
       ({ avatar } = req.files);
       nombreAvatar = await guardarAvatar(avatar);
     } else if (req.body?.avatar) {
-      nombreAvatar = req.body.avatar;
+      // nombreAvatar = req.body.avatar;
+      if(req.body.avatar[0] + req.body.avatar[1] === "ht") {
+        nombreAvatar = await SaveProfileGoogleImage(req.body.avatar)        
+      }
     }
-
     //Generar codigo de registro
     const codigoRegistro = crypto.randomUUID();
 
